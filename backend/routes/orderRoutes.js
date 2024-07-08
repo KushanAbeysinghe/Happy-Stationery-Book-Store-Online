@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('/', createOrder);
 router.get('/', getOrders);
-router.put('/status', updateOrderStatus);
+router.put('/status', updateOrderStatus);  // Ensure this route is properly defined
 
 module.exports = router;

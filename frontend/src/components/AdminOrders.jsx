@@ -20,17 +20,20 @@ const AdminOrders = () => {
     fetchOrders();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleUpdateStatus = async (id, status) => {
+    try {
+      await api.put('/orders/status', { id, status });
+      setOrders(orders.map(order => order.id === id ? { ...order, status } : order));
+      alert(`Order ${status}`);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Failed to update order status');
+    }
+  };
 
-  if (error) {
-    return <div>Error fetching orders: {error.message}</div>;
-  }
-
-  return (
+  const renderOrderTable = (orders, title) => (
     <div>
-      <h2>All Orders</h2>
+      <h3>{title}</h3>
       {orders.length > 0 ? (
         <table>
           <thead>
@@ -45,6 +48,8 @@ const AdminOrders = () => {
               <th>City</th>
               <th>Postal Code</th>
               <th>Items</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -63,10 +68,19 @@ const AdminOrders = () => {
                   <ul>
                     {order.items.map(item => (
                       <li key={item.id}>
-                        Book ID: {item.book_id}, Quantity: {item.quantity}
+                        Book ID: {item.book_id}, Title: {item.title}, Quantity: {item.quantity}
                       </li>
                     ))}
                   </ul>
+                </td>
+                <td>{order.status}</td>
+                <td>
+                  {order.status === 'pending' && (
+                    <>
+                      <button onClick={() => handleUpdateStatus(order.id, 'completed')}>Confirm</button>
+                      <button onClick={() => handleUpdateStatus(order.id, 'rejected')}>Reject</button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
@@ -75,6 +89,27 @@ const AdminOrders = () => {
       ) : (
         <div>No orders available</div>
       )}
+    </div>
+  );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching orders: {error.message}</div>;
+  }
+
+  const pendingOrders = orders.filter(order => order.status === 'pending');
+  const completedOrders = orders.filter(order => order.status === 'completed');
+  const rejectedOrders = orders.filter(order => order.status === 'rejected');
+
+  return (
+    <div>
+      <h2>All Orders</h2>
+      {renderOrderTable(pendingOrders, 'Pending Orders')}
+      {renderOrderTable(completedOrders, 'Completed Orders')}
+      {renderOrderTable(rejectedOrders, 'Rejected Orders')}
     </div>
   );
 };

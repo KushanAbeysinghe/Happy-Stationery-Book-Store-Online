@@ -3,7 +3,7 @@ const db = require('../config/db');
 const Order = {
   create: async (userId, total, name, address, email, phone, city, postalCode) => {
     const [result] = await db.execute(
-      'INSERT INTO orders (user_id, total, name, address, email, phone, city, postal_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO orders (user_id, total, name, address, email, phone, city, postal_code, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "pending")',
       [userId, total, name, address, email, phone, city, postalCode]
     );
     return result.insertId;
@@ -15,7 +15,12 @@ const Order = {
   findAllWithDetails: async () => {
     const [orders] = await db.execute('SELECT * FROM orders');
     for (const order of orders) {
-      const [orderItems] = await db.execute('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
+      const [orderItems] = await db.execute(`
+        SELECT order_items.*, books.title
+        FROM order_items
+        JOIN books ON order_items.book_id = books.id
+        WHERE order_items.order_id = ?
+      `, [order.id]);
       order.items = orderItems;
     }
     return orders;

@@ -1,5 +1,4 @@
 const Order = require('../models/orderModel');
-const Book = require('../models/bookModel');
 
 const createOrder = async (req, res) => {
   const { userId, total, name, address, email, phone, city, postalCode, items } = req.body;
@@ -35,8 +34,15 @@ const getOrders = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
   const { id, status } = req.body;
-  await Order.updateStatus(id, status);
-  res.json({ message: 'Order status updated' });
+  try {
+    const updatedRows = await Order.updateStatus(id, status);
+    if (updatedRows === 0) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json({ message: 'Order status updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating order status', error });
+  }
 };
 
 module.exports = { createOrder, getOrders, updateOrderStatus };
