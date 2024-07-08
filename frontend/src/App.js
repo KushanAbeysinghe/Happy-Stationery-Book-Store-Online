@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import Cart from './components/Cart';
+import AdminDashboard from './components/AdminDashboard';
+import BookStore from './components/BookStore';
+import Checkout from './components/Checkout';
+import AdminOrders from './components/AdminOrders'; // Import the AdminOrders component
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/bookstore" element={<BookStore />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/admin/orders" element={<AdminOrders />} /> {/* Add the AdminOrders route */}
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
