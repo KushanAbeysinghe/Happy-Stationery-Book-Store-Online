@@ -14,7 +14,7 @@ const AdminDashboard = () => {
     price: '',
     stock: '',
     categoryId: '',
-    image: null,
+    images: [],
     preorder: false
   });
   const [newStationery, setNewStationery] = useState({
@@ -24,6 +24,7 @@ const AdminDashboard = () => {
     categoryId: '',
     image: null
   });
+  const [stationeryItems, setStationeryItems] = useState([]); // Add this line
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,10 +33,12 @@ const AdminDashboard = () => {
         const preorderBooksResponse = await api.get('/books/preorder');
         const categoriesResponse = await api.get('/categories');
         const stationeryCategoriesResponse = await api.get('/stationery-categories');
+        const stationeryResponse = await api.get('/stationery'); // Fetch stationery items
         setBooks(booksResponse.data);
         setPreorderBooks(preorderBooksResponse.data);
         setCategories(categoriesResponse.data);
         setStationeryCategories(stationeryCategoriesResponse.data);
+        setStationeryItems(stationeryResponse.data); // Set stationery items
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -90,7 +93,7 @@ const AdminDashboard = () => {
   const handleFileChange = (e) => {
     setNewBook({
       ...newBook,
-      image: e.target.files[0]
+      images: [...e.target.files]
     });
   };
 
@@ -102,7 +105,9 @@ const AdminDashboard = () => {
     formData.append('price', newBook.price);
     formData.append('stock', newBook.stock);
     formData.append('categoryId', newBook.categoryId);
-    formData.append('image', newBook.image);
+    newBook.images.forEach(image => {
+      formData.append('images', image);
+    });
     formData.append('preorder', newBook.preorder);
 
     try {
@@ -114,7 +119,7 @@ const AdminDashboard = () => {
         price: '',
         stock: '',
         categoryId: '',
-        image: null,
+        images: [],
         preorder: false
       });
       // Refresh books
@@ -250,7 +255,7 @@ const AdminDashboard = () => {
             </option>
           ))}
         </select>
-        <input type="file" name="image" onChange={handleFileChange} required />
+        <input type="file" name="images" onChange={handleFileChange} multiple required />
         <label>
           Preorder
           <input

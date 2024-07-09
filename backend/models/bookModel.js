@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 const Book = {
-  create: async (title, author, price, stock, categoryId, image, preorder = false, preorderDate = null, preorderedStock = 0) => {
+  create: async (title, author, price, stock, categoryId, images, preorder = false, preorderDate = null, preorderedStock = 0) => {
     const [result] = await db.execute(
-      'INSERT INTO books (title, author, price, stock, category_id, image, preorder, preorder_date, preordered_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, author, price, stock, categoryId, image, preorder, preorderDate, preorderedStock]
+      'INSERT INTO books (title, author, price, stock, category_id, image1, image2, image3, preorder, preorder_date, preordered_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [title, author, price, stock, categoryId, images[0] || null, images[1] || null, images[2] || null, preorder, preorderDate, preorderedStock]
     );
     return result.insertId;
   },
@@ -12,14 +12,22 @@ const Book = {
     const [rows] = await db.execute('SELECT * FROM books');
     return rows.map(book => ({
       ...book,
-      image: book.image ? `http://localhost:5000/uploads/${book.image}` : null
+      images: [
+        book.image1 ? `http://localhost:5000/uploads/${book.image1}` : null,
+        book.image2 ? `http://localhost:5000/uploads/${book.image2}` : null,
+        book.image3 ? `http://localhost:5000/uploads/${book.image3}` : null
+      ].filter(image => image !== null)
     }));
   },
   findPreorderBooks: async () => {
     const [rows] = await db.execute('SELECT * FROM books WHERE preorder = TRUE');
     return rows.map(book => ({
       ...book,
-      image: book.image ? `http://localhost:5000/uploads/${book.image}` : null
+      images: [
+        book.image1 ? `http://localhost:5000/uploads/${book.image1}` : null,
+        book.image2 ? `http://localhost:5000/uploads/${book.image2}` : null,
+        book.image3 ? `http://localhost:5000/uploads/${book.image3}` : null
+      ].filter(image => image !== null)
     }));
   },
   findById: async (id) => {

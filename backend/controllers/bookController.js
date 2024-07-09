@@ -16,8 +16,8 @@ const upload = multer({ storage: storage });
 
 const createBook = async (req, res) => {
   const { title, author, price, stock, categoryId, preorder, preorderDate, preorderedStock } = req.body;
-  const image = req.file ? req.file.filename : null;
-  const bookId = await Book.create(title, author, price, stock, categoryId, image, preorder, preorderDate, preorderedStock);
+  const images = req.files.map(file => file.filename);
+  const bookId = await Book.create(title, author, price, stock, categoryId, images, preorder, preorderDate, preorderedStock);
   res.status(201).json({ bookId });
 };
 
@@ -56,4 +56,4 @@ const transferPreorderStock = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBooks, updateBook, getPreorderBooks, upload, transferPreorderStock };
+module.exports = { createBook, getBooks, updateBook, getPreorderBooks, upload: upload.array('images', 3), transferPreorderStock };
