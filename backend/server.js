@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const stationeryRoutes = require('./routes/stationeryRoutes'); // Ensure this is correct
 const locationRoutes = require('./routes/locationRoutes'); // Add this line
 const schedule = require('node-schedule'); // Add this line
+const bankRoutes = require('./routes/bankRoutes'); // Add this line if bankRoutes is a separate file
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api', stationeryRoutes); // Add this line
 app.use('/api/locations', locationRoutes); // Add this line
+app.use('/api', bankRoutes); // Add this line if bankRoutes is a separate file
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

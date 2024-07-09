@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import CheckoutPopup from './PaymentPopup'; // Import the new popup component
 
 const Checkout = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -21,6 +22,9 @@ const Checkout = () => {
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [filteredAreas, setFilteredAreas] = useState([]);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [orderId, setOrderId] = useState(null);
+  const [bankDetails, setBankDetails] = useState({});
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,10 +104,28 @@ const Checkout = () => {
         }))
       };
       console.log("Order to be placed:", order); // Add this line to debug
-      await api.post('/orders', order);
-      alert('Order placed successfully');
+      const response = await api.post('/orders', order);
+      const { orderId } = response.data;
+      setOrderId(orderId);
+
+      // Fetch bank details
+      const bankResponse = await api.get('/orders/bank-details');
+      setBankDetails(bankResponse.data);
+
+      // Show the popup
+      setIsPopupOpen(true);
+
+      // Clear the form fields
+      setName('');
+      setAddress('');
+      setEmail('');
+      setPhone('');
+      setCity('');
+      setPostalCode('');
+      setProvince('');
+      setDistrict('');
+      setArea('');
       localStorage.removeItem('cart');
-      navigate('/bookstore');
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place order');
@@ -179,6 +201,14 @@ const Checkout = () => {
         <h3>Subtotal: LKR {(total + deliveryFee).toFixed(2)}</h3>
         <button type="submit">Place Order</button>
       </form>
+      {isPopupOpen && (
+        <CheckoutPopup
+          orderId={orderId}
+          subtotal={(total + deliveryFee).toFixed(2)}
+          bankDetails={bankDetails}
+          onClose={() => setIsPopupOpen(false)}
+        />
+      )}
     </div>
   );
 };

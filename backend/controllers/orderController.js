@@ -1,6 +1,7 @@
 const Order = require('../models/orderModel');
 const Book = require('../models/bookModel');
 const Stationery = require('../models/stationeryModel');
+const db = require('../config/db');
 
 const createOrder = async (req, res) => {
   const { userId, total, name, address, email, phone, city, postalCode, province, district, area, items } = req.body;
@@ -65,4 +66,18 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getOrders, updateOrderStatus };
+const getBankDetails = async (req, res) => {
+  try {
+    const [rows] = await db.execute('SELECT * FROM bank_details LIMIT 1');
+    if (rows.length > 0) {
+      res.json(rows[0]);
+    } else {
+      res.status(404).json({ message: 'Bank details not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching bank details:', error);
+    res.status(500).json({ message: 'Error fetching bank details' });
+  }
+};
+
+module.exports = { createOrder, getOrders, updateOrderStatus, getBankDetails };
