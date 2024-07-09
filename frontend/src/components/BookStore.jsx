@@ -5,6 +5,7 @@ import Book from './Book';
 
 const BookStore = () => {
   const [books, setBooks] = useState([]);
+  const [preorderBooks, setPreorderBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,8 +17,16 @@ const BookStore = () => {
     const fetchData = async () => {
       try {
         const booksResponse = await api.get('/books');
-        setBooks(booksResponse.data);
+        const preorderBooksResponse = await api.get('/books/preorder');
         const categoriesResponse = await api.get('/categories');
+
+        // Separate regular books and preorder books
+        const allBooks = booksResponse.data;
+        const preorderBooks = preorderBooksResponse.data;
+        const regularBooks = allBooks.filter(book => !book.preorder);
+
+        setBooks(regularBooks);
+        setPreorderBooks(preorderBooks);
         setCategories(categoriesResponse.data);
         setLoading(false);
       } catch (error) {
@@ -32,9 +41,17 @@ const BookStore = () => {
     book.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filteredPreorderBooks = preorderBooks.filter(book =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const booksToDisplay = selectedCategory
     ? filteredBooks.filter(book => book.category_id === selectedCategory)
     : filteredBooks;
+
+  const preorderBooksToDisplay = selectedCategory
+    ? filteredPreorderBooks.filter(book => book.category_id === selectedCategory)
+    : filteredPreorderBooks;
 
   if (loading) {
     return <div>Loading...</div>;
@@ -66,12 +83,23 @@ const BookStore = () => {
         </ul>
       </div>
       <div>
+        <h3>Books</h3>
         {booksToDisplay.length > 0 ? (
           booksToDisplay.map(book => (
             <Book key={book.id} book={book} />
           ))
         ) : (
           <div>No books available</div>
+        )}
+      </div>
+      <div>
+        <h3>Preorder Books</h3>
+        {preorderBooksToDisplay.length > 0 ? (
+          preorderBooksToDisplay.map(book => (
+            <Book key={book.id} book={book} />
+          ))
+        ) : (
+          <div>No preorder books available</div>
         )}
       </div>
     </div>

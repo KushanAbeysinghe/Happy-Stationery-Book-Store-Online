@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 const Book = {
-  create: async (title, author, price, stock, categoryId, image) => {
+  create: async (title, author, price, stock, categoryId, image, preorder = false) => {
     const [result] = await db.execute(
-      'INSERT INTO books (title, author, price, stock, category_id, image) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, author, price, stock, categoryId, image]
+      'INSERT INTO books (title, author, price, stock, category_id, image, preorder) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [title, author, price, stock, categoryId, image, preorder]
     );
     return result.insertId;
   },
@@ -15,12 +15,19 @@ const Book = {
       image: book.image ? `http://localhost:5000/uploads/${book.image}` : null
     }));
   },
+  findPreorderBooks: async () => {
+    const [rows] = await db.execute('SELECT * FROM books WHERE preorder = TRUE');
+    return rows.map(book => ({
+      ...book,
+      image: book.image ? `http://localhost:5000/uploads/${book.image}` : null
+    }));
+  },
   findById: async (id) => {
     const [rows] = await db.execute('SELECT * FROM books WHERE id = ?', [id]);
     return rows[0];
   },
-  updateStock: async (id, stock) => {
-    const [result] = await db.execute('UPDATE books SET stock = ? WHERE id = ?', [stock, id]);
+  updateStockAndPrice: async (id, stock, price) => {
+    const [result] = await db.execute('UPDATE books SET stock = ?, price = ? WHERE id = ?', [stock, price, id]);
     return result.affectedRows;
   }
 };

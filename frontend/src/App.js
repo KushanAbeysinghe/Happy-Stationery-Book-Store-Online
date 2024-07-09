@@ -6,7 +6,9 @@ import Cart from './components/Cart';
 import AdminDashboard from './components/AdminDashboard';
 import BookStore from './components/BookStore';
 import Checkout from './components/Checkout';
-import AdminOrders from './components/AdminOrders'; // Import the AdminOrders component
+import AdminOrders from './components/AdminOrders';
+import Stationery from './components/Stationery'; // Import the Stationery component
+import Stock from './components/Stock'; // Import the Stock component
 
 const App = () => {
   return (
@@ -18,7 +20,10 @@ const App = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/bookstore" element={<BookStore />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/admin/orders" element={<AdminOrders />} /> {/* Add the AdminOrders route */}
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/stationery" element={<Stationery />} /> {/* Add the Stationery route */}
+        <Route path="/admin/stock" element={<Stock />} /> {/* Add the Stock route */}
+        <Route path="/" element={<BookStore />} />
       </Routes>
     </Router>
   );

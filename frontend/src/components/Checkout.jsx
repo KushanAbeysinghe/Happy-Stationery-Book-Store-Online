@@ -1,32 +1,105 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 const Checkout = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const [total, setTotal] = useState(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [province, setProvince] = useState('');
+  const [district, setDistrict] = useState('');
+  const [area, setArea] = useState('');
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [filteredAreas, setFilteredAreas] = useState([]);
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const response = await api.get('/locations/provinces');
+        setProvinces(response.data);
+      } catch (error) {
+        console.error('Error fetching provinces:', error);
+      }
+    };
+    fetchProvinces();
+  }, []);
+
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await api.get('/locations/districts');
+        setDistricts(response.data);
+      } catch (error) {
+        console.error('Error fetching districts:', error);
+      }
+    };
+    fetchDistricts();
+  }, []);
+
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const response = await api.get('/locations/areas');
+        setAreas(response.data);
+      } catch (error) {
+        console.error('Error fetching areas:', error);
+      }
+    };
+    fetchAreas();
+  }, []);
+
+  useEffect(() => {
+    setFilteredDistricts(districts.filter(d => d.province_id === parseInt(province)));
+    setDistrict('');
+    setArea('');
+  }, [province, districts]);
+
+  useEffect(() => {
+    setFilteredAreas(areas.filter(a => a.district_id === parseInt(district)));
+    setArea('');
+  }, [district, areas]);
+
+  useEffect(() => {
+    if (area) {
+      const selectedArea = areas.find(a => a.id === parseInt(area));
+      setDeliveryFee(parseFloat(selectedArea ? selectedArea.delivery_fee : 0));
+    } else {
+      setDeliveryFee(0);
+    }
+  }, [area, areas]);
 
   const handlePlaceOrder = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       const order = {
         userId: user.id,
-        total,
+        total: total + deliveryFee,
         name,
         address,
         email,
         phone,
         city,
         postalCode,
-        items: cart
+        province,
+        district,
+        area,
+        items: cart.map(item => ({
+          id: item.id,
+          quantity: item.quantity,
+          type: item.type
+        }))
       };
+      console.log("Order to be placed:", order); // Add this line to debug
       await api.post('/orders', order);
       alert('Order placed successfully');
       localStorage.removeItem('cart');
@@ -83,7 +156,27 @@ const Checkout = () => {
           onChange={(e) => setPostalCode(e.target.value)}
           required
         />
-        <h3>Total: ${total.toFixed(2)}</h3>
+        <select value={province} onChange={(e) => setProvince(e.target.value)} required>
+          <option value="">Select Province</option>
+          {provinces.map(p => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
+        <select value={district} onChange={(e) => setDistrict(e.target.value)} required>
+          <option value="">Select District</option>
+          {filteredDistricts.map(d => (
+            <option key={d.id} value={d.id}>{d.name}</option>
+          ))}
+        </select>
+        <select value={area} onChange={(e) => setArea(e.target.value)} required>
+          <option value="">Select Area</option>
+          {filteredAreas.map(a => (
+            <option key={a.id} value={a.id}>{a.name}</option>
+          ))}
+        </select>
+        <h3>Total: LKR {total.toFixed(2)}</h3>
+        <h3>Delivery Fee: LKR {deliveryFee.toFixed(2)}</h3>
+        <h3>Subtotal: LKR {(total + deliveryFee).toFixed(2)}</h3>
         <button type="submit">Place Order</button>
       </form>
     </div>
