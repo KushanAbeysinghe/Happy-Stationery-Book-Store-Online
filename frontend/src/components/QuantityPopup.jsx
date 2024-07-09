@@ -13,7 +13,7 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
     <div className="popup-overlay">
       <div className="popup-content">
         <h2>{item.title}</h2>
-        <p>Price: ${item.price}</p>
+        <p>Price: LKR {item.price}</p>
         <p>Stock: {item.stock}</p>
         <input
           type="number"

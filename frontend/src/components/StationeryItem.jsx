@@ -21,7 +21,7 @@ const StationeryItem = ({ item }) => {
     <div className="book-item">
       <h3>{item.title}</h3>
       {item.image && <img src={item.image} alt={item.title} style={{ width: '200px', height: 'auto' }} />}
-      <p>Price: ${item.price}</p>
+      <p>Price: LKR {item.price}</p>
       <p>Stock: {item.stock > 0 ? item.stock : 'Out of stock'}</p>
       {item.stock > 0 && (
         <button onClick={() => setIsPopupOpen(true)}>Add to Cart</button>

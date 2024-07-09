@@ -42,7 +42,7 @@ const Book = ({ book }) => {
         </div>
       )}
       <p>Author: {book.author}</p>
-      <p>Price: ${book.price}</p>
+      <p>Price: LKR {book.price}</p>
       <p>
         Stock: {book.stock > 0 ? (
           book.stock

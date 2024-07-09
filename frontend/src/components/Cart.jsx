@@ -56,7 +56,7 @@ const Cart = () => {
               </li>
             ))}
           </ul>
-          <h3>Total: ${total.toFixed(2)}</h3>
+          <h3>Total: LKR {total.toFixed(2)}</h3>
           <button onClick={() => navigate('/checkout')}>Checkout</button>
         </>
       ) : (

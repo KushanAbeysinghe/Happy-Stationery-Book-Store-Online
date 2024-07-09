@@ -3,7 +3,6 @@ import api from '../api';
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
-  const [preorderBooks, setPreorderBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
   const [stationeryCategories, setStationeryCategories] = useState([]);
@@ -24,21 +23,19 @@ const AdminDashboard = () => {
     categoryId: '',
     image: null
   });
-  const [stationeryItems, setStationeryItems] = useState([]); // Add this line
+  const [stationeryItems, setStationeryItems] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const booksResponse = await api.get('/books');
-        const preorderBooksResponse = await api.get('/books/preorder');
         const categoriesResponse = await api.get('/categories');
         const stationeryCategoriesResponse = await api.get('/stationery-categories');
-        const stationeryResponse = await api.get('/stationery'); // Fetch stationery items
+        const stationeryResponse = await api.get('/stationery');
         setBooks(booksResponse.data);
-        setPreorderBooks(preorderBooksResponse.data);
         setCategories(categoriesResponse.data);
         setStationeryCategories(stationeryCategoriesResponse.data);
-        setStationeryItems(stationeryResponse.data); // Set stationery items
+        setStationeryItems(stationeryResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -124,13 +121,7 @@ const AdminDashboard = () => {
       });
       // Refresh books
       const booksResponse = await api.get('/books');
-      const preorderBooksResponse = await api.get('/books/preorder');
-      const allBooks = booksResponse.data;
-      const preorderBooks = preorderBooksResponse.data;
-      const regularBooks = allBooks.filter(book => !book.preorder);
-
-      setBooks(regularBooks);
-      setPreorderBooks(preorderBooks);
+      setBooks(booksResponse.data);
     } catch (error) {
       console.error('Error adding book:', error);
     }
@@ -256,7 +247,7 @@ const AdminDashboard = () => {
           ))}
         </select>
         <input type="file" name="images" onChange={handleFileChange} multiple required />
-        <label>
+        {/* <label>
           Preorder
           <input
             type="checkbox"
@@ -264,7 +255,7 @@ const AdminDashboard = () => {
             checked={newBook.preorder}
             onChange={handleInputChange}
           />
-        </label>
+        </label> */}
         <button type="submit">Add Book</button>
       </form>
 
@@ -312,28 +303,52 @@ const AdminDashboard = () => {
       </form>
 
       <h3>Books</h3>
-      {books.map(book => (
-        <div key={book.id}>
-          <h4>{book.title}</h4>
-          <p>Author: {book.author}</p>
-          <p>Price: ${book.price}</p>
-          <p>Stock: {book.stock}</p>
-          <p>Category: {categories.find(cat => cat.id === book.category_id)?.name}</p>
-          <p>Preorder: {book.preorder ? 'Yes' : 'No'}</p>
-        </div>
-      ))}
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Preorder</th>
+          </tr>
+        </thead>
+        <tbody>
+          {books.map(book => (
+            <tr key={book.id}>
+              <td>{book.title}</td>
+              <td>{book.author}</td>
+              <td>${book.price}</td>
+              <td>{book.stock}</td>
+              <td>{categories.find(cat => cat.id === book.category_id)?.name}</td>
+              <td>{book.preorder ? 'Yes' : 'No'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <h3>Preorder Books</h3>
-      {preorderBooks.map(book => (
-        <div key={book.id}>
-          <h4>{book.title}</h4>
-          <p>Author: {book.author}</p>
-          <p>Price: ${book.price}</p>
-          <p>Stock: {book.stock}</p>
-          <p>Category: {categories.find(cat => cat.id === book.category_id)?.name}</p>
-          <p>Preorder: {book.preorder ? 'Yes' : 'No'}</p>
-        </div>
-      ))}
+      <h3>Stationery</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stationeryItems.map(item => (
+            <tr key={item.id}>
+              <td>{item.title}</td>
+              <td>LKR {item.price}</td>
+              <td>{item.stock}</td>
+              <td>{stationeryCategories.find(cat => cat.id === item.category_id)?.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
