@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 const Book = {
-  create: async (title, author, price, stock, categoryId, image, preorder = false, preorderDate = null) => {
+  create: async (title, author, price, stock, categoryId, image, preorder = false, preorderDate = null, preorderedStock = 0) => {
     const [result] = await db.execute(
-      'INSERT INTO books (title, author, price, stock, category_id, image, preorder, preorder_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, author, price, stock, categoryId, image, preorder, preorderDate]
+      'INSERT INTO books (title, author, price, stock, category_id, image, preorder, preorder_date, preordered_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [title, author, price, stock, categoryId, image, preorder, preorderDate, preorderedStock]
     );
     return result.insertId;
   },
@@ -26,10 +26,10 @@ const Book = {
     const [rows] = await db.execute('SELECT * FROM books WHERE id = ?', [id]);
     return rows[0];
   },
-  updateStockAndPrice: async (id, stock, price, preorder = false, preorderDate = null) => {
+  updateStockAndPrice: async (id, stock, price, preorder = false, preorderDate = null, preorderedStock = 0) => {
     const [result] = await db.execute(
-      'UPDATE books SET stock = ?, price = ?, preorder = ?, preorder_date = ? WHERE id = ?',
-      [stock !== undefined ? stock : null, price !== undefined ? price : null, preorder, preorderDate, id]
+      'UPDATE books SET stock = ?, price = ?, preorder = ?, preorder_date = ?, preordered_stock = ? WHERE id = ?',
+      [stock !== undefined ? stock : null, price !== undefined ? price : null, preorder, preorderDate, preorderedStock, id]
     );
     return result.affectedRows;
   },
@@ -42,6 +42,14 @@ const Book = {
       'UPDATE books SET preorder = ?, preorder_date = ? WHERE id = ?',
       [preorder, preorderDate, id]
     );
+    return result.affectedRows;
+  },
+  transferPreorderStock: async () => {
+    const [result] = await db.execute(`
+      UPDATE books 
+      SET stock = stock + preordered_stock, preordered_stock = 0 
+      WHERE preorder = 1 AND preorder_date = CURDATE()
+    `);
     return result.affectedRows;
   }
 };

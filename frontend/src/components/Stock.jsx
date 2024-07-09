@@ -22,11 +22,13 @@ const Stock = () => {
 
   const handleUpdate = async (type, item) => {
     try {
-      const updatedStock = item.newStock !== undefined ? item.newStock : item.stock;
+      const newStockValue = item.newStock !== undefined ? item.newStock : 0;
+      const preorderedStockValue = item.preorderedStock !== undefined ? item.preorderedStock : 0;
+      const updatedStock = (item.stock || 0) + newStockValue + preorderedStockValue;
       const updatedPrice = item.newPrice !== undefined ? item.newPrice : item.price;
 
       if (type === 'book') {
-        await api.put(`/books/${item.id}`, { stock: updatedStock, price: updatedPrice, preorder: item.preorder, preorderDate: item.preorderDate });
+        await api.put(`/books/${item.id}`, { stock: updatedStock, price: updatedPrice, preorder: item.preorder, preorderDate: item.preorderDate, preorderedStock: preorderedStockValue });
       } else if (type === 'stationery') {
         await api.put(`/stationery/${item.id}`, { stock: updatedStock, price: updatedPrice });
       }
@@ -45,6 +47,9 @@ const Stock = () => {
     }
     if (field === 'newPrice' && value === '') {
       delete item.newPrice;
+    }
+    if (field === 'preorderedStock' && value === '') {
+      delete item.preorderedStock;
     }
   };
 
@@ -72,6 +77,7 @@ const Stock = () => {
             <th>New Price</th>
             <th>Preorder</th>
             <th>Preorder Date</th>
+            <th>Preordered Stock</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -110,6 +116,14 @@ const Stock = () => {
                   type="date"
                   defaultValue={book.preorder_date ? book.preorder_date.split('T')[0] : ''}
                   onChange={(e) => handleInputChange(book, 'preorderDate', e.target.value)}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={book.preordered_stock}
+                  onChange={(e) => handleInputChange(book, 'preorderedStock', parseInt(e.target.value))}
                 />
               </td>
               <td>
