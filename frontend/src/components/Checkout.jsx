@@ -28,6 +28,12 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (total === 0) {
+      navigate('/'); // Redirect to home page if total is zero
+    }
+  }, [total, navigate]);
+
+  useEffect(() => {
     const fetchProvinces = async () => {
       try {
         const response = await api.get('/locations/provinces');

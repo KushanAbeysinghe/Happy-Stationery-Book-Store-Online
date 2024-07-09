@@ -1,7 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './PaymentPopup.css';
 
 const PaymentPopup = ({ orderId, subtotal, bankDetails, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    onClose();
+    navigate('/'); // Navigate to the home page
+  };
+
   return (
     <div className="popup-overlay">
       <div className="popup-content">
@@ -15,7 +23,7 @@ const PaymentPopup = ({ orderId, subtotal, bankDetails, onClose }) => {
         <p>Account Number: {bankDetails.account_number}</p>
         <p>Please pay the amount and WhatsApp the receipt to the following number: {bankDetails.whatsapp_number}</p>
         <p>Thank you! Come back again.</p>
-        <button onClick={onClose}>Close</button>
+        <button onClick={handleClose}>Close</button>
       </div>
     </div>
   );
