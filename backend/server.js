@@ -8,6 +8,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const stationeryRoutes = require('./routes/stationeryRoutes'); // Ensure this is correct
 const locationRoutes = require('./routes/locationRoutes'); // Add this line
+const schedule = require('node-schedule'); // Add this line
 
 dotenv.config();
 
@@ -27,4 +28,15 @@ app.use('/api/locations', locationRoutes); // Add this line
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Schedule task to run daily at midnight
+schedule.scheduleJob('0 0 * * *', async () => {
+  const Book = require('./models/bookModel');
+  try {
+    const updatedRows = await Book.transferPreorderStock();
+    console.log(`Transferred preorder stock for ${updatedRows} books`);
+  } catch (error) {
+    console.error('Error transferring preorder stock:', error);
+  }
 });

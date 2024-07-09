@@ -47,7 +47,7 @@ const Book = {
   transferPreorderStock: async () => {
     const [result] = await db.execute(`
       UPDATE books 
-      SET stock = stock + preordered_stock, preordered_stock = 0 
+      SET stock = stock + preordered_stock, preordered_stock = 0, preorder = 0, preorder_date = NULL
       WHERE preorder = 1 AND preorder_date = CURDATE()
     `);
     return result.affectedRows;

@@ -23,12 +23,19 @@ const Stock = () => {
   const handleUpdate = async (type, item) => {
     try {
       const newStockValue = item.newStock !== undefined ? item.newStock : 0;
-      const preorderedStockValue = item.preorderedStock !== undefined ? item.preorderedStock : 0;
-      const updatedStock = (item.stock || 0) + newStockValue + preorderedStockValue;
+      const updatedStock = (item.stock || 0) + newStockValue;
       const updatedPrice = item.newPrice !== undefined ? item.newPrice : item.price;
+      const preorderedStock = item.preorderedStock !== undefined ? item.preorderedStock : item.preordered_stock;
+      const preorderDate = item.preorderDate || item.preorder_date;
 
       if (type === 'book') {
-        await api.put(`/books/${item.id}`, { stock: updatedStock, price: updatedPrice, preorder: item.preorder, preorderDate: item.preorderDate, preorderedStock: preorderedStockValue });
+        await api.put(`/books/${item.id}`, { 
+          stock: updatedStock, 
+          price: updatedPrice, 
+          preorder: item.preorder, 
+          preorderDate: preorderDate, 
+          preorderedStock: preorderedStock 
+        });
       } else if (type === 'stationery') {
         await api.put(`/stationery/${item.id}`, { stock: updatedStock, price: updatedPrice });
       }
