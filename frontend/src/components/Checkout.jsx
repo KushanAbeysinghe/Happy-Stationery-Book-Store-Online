@@ -4,16 +4,17 @@ import api from '../api';
 
 const Checkout = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const user = JSON.parse(localStorage.getItem('user')) || {};
   const [total, setTotal] = useState(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [province, setProvince] = useState('');
-  const [district, setDistrict] = useState('');
-  const [area, setArea] = useState('');
+  const [name, setName] = useState(user.name || '');
+  const [address, setAddress] = useState(user.address || '');
+  const [email, setEmail] = useState(user.email || '');
+  const [phone, setPhone] = useState(user.phone || '');
+  const [city, setCity] = useState(user.city || '');
+  const [postalCode, setPostalCode] = useState(user.postalCode || '');
+  const [province, setProvince] = useState(user.province || '');
+  const [district, setDistrict] = useState(user.district || '');
+  const [area, setArea] = useState(user.area || '');
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -80,7 +81,6 @@ const Checkout = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
       const order = {
         userId: user.id,
         total: total + deliveryFee,

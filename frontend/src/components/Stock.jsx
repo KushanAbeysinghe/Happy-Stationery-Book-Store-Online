@@ -3,126 +3,53 @@ import api from '../api';
 
 const Stock = () => {
   const [books, setBooks] = useState([]);
-  const [stationeryItems, setStationeryItems] = useState([]);
+  const [stationery, setStationery] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [newQuantities, setNewQuantities] = useState({});
-  const [newPrices, setNewPrices] = useState({});
 
   useEffect(() => {
-    const fetchStockData = async () => {
+    const fetchStock = async () => {
       try {
         const booksResponse = await api.get('/books');
         const stationeryResponse = await api.get('/stationery');
         setBooks(booksResponse.data);
-        setStationeryItems(stationeryResponse.data);
-        setLoading(false);
+        setStationery(stationeryResponse.data);
       } catch (error) {
-        console.error('Error fetching stock data:', error);
-        setError(error);
-        setLoading(false);
+        console.error('Error fetching stock:', error);
       }
     };
-    fetchStockData();
+    fetchStock();
   }, []);
 
-  const handleUpdateBook = async (id, newQuantity, updatedPrice) => {
-    const book = books.find(book => book.id === id);
-    const updatedQuantity = book.stock + newQuantity;
+  const handleUpdate = async (type, item) => {
     try {
-      await api.put(`/books/${id}`, { stock: updatedQuantity, price: updatedPrice });
-      setBooks(books.map(book => (book.id === id ? { ...book, stock: updatedQuantity, price: updatedPrice } : book)));
-      alert('Book updated successfully');
+      const updatedStock = item.newStock !== undefined ? item.newStock : item.stock;
+      const updatedPrice = item.newPrice !== undefined ? item.newPrice : item.price;
+
+      if (type === 'book') {
+        await api.put(`/books/${item.id}`, { stock: updatedStock, price: updatedPrice, preorder: item.preorder, preorderDate: item.preorderDate });
+      } else if (type === 'stationery') {
+        await api.put(`/stationery/${item.id}`, { stock: updatedStock, price: updatedPrice });
+      }
+      alert('Stock updated successfully');
+      window.location.reload(); // Refresh the page to reflect changes
     } catch (error) {
-      console.error('Error updating book:', error);
-      alert('Failed to update book');
+      console.error('Error updating stock:', error);
+      alert('Failed to update stock');
     }
   };
 
-  const handleUpdateStationery = async (id, newQuantity, updatedPrice) => {
-    const item = stationeryItems.find(item => item.id === id);
-    const updatedQuantity = item.stock + newQuantity;
-    try {
-      await api.put(`/stationery/${id}`, { stock: updatedQuantity, price: updatedPrice });
-      setStationeryItems(stationeryItems.map(item => (item.id === id ? { ...item, stock: updatedQuantity, price: updatedPrice } : item)));
-      alert('Stationery item updated successfully');
-    } catch (error) {
-      console.error('Error updating stationery item:', error);
-      alert('Failed to update stationery item');
+  const handleInputChange = (item, field, value) => {
+    item[field] = value;
+    if (field === 'newStock' && value === '') {
+      delete item.newStock;
+    }
+    if (field === 'newPrice' && value === '') {
+      delete item.newPrice;
     }
   };
 
-  const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredStationery = stationeryItems.filter(item =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const renderStockTable = (items, type) => (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
-      <thead>
-        <tr>
-          <th style={{ border: '1px solid black', padding: '8px' }}>ID</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Title</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Current Quantity</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>New Quantity</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Current Price</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>New Price</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {items.map(item => (
-          <tr key={item.id} style={{ backgroundColor: item.stock <= 2 ? 'red' : 'transparent' }}>
-            <td style={{ border: '1px solid black', padding: '8px' }}>{item.id}</td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>{item.title}</td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>{item.stock}</td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>
-              <input
-                type="number"
-                defaultValue={0}
-                onChange={(e) =>
-                  setNewQuantities({ ...newQuantities, [item.id]: parseInt(e.target.value, 10) || 0 })
-                }
-              />
-            </td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>{item.price}</td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>
-              <input
-                type="number"
-                defaultValue={item.price}
-                onChange={(e) =>
-                  setNewPrices({ ...newPrices, [item.id]: parseFloat(e.target.value) || item.price })
-                }
-              />
-            </td>
-            <td style={{ border: '1px solid black', padding: '8px' }}>
-              <button
-                onClick={() =>
-                  type === 'book'
-                    ? handleUpdateBook(item.id, newQuantities[item.id] || 0, newPrices[item.id] || item.price)
-                    : handleUpdateStationery(item.id, newQuantities[item.id] || 0, newPrices[item.id] || item.price)
-                }
-              >
-                Update
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error fetching stock data: {error.message}</div>;
-  }
+  const filteredBooks = books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredStationery = stationery.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div>
@@ -134,9 +61,107 @@ const Stock = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <h3>Books</h3>
-      {renderStockTable(filteredBooks, 'book')}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Current Quantity</th>
+            <th>New Quantity</th>
+            <th>Current Price</th>
+            <th>New Price</th>
+            <th>Preorder</th>
+            <th>Preorder Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredBooks.map(book => (
+            <tr key={book.id}>
+              <td>{book.id}</td>
+              <td>{book.title}</td>
+              <td>{book.stock}</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={book.stock}
+                  onChange={(e) => handleInputChange(book, 'newStock', parseInt(e.target.value))}
+                />
+              </td>
+              <td>{book.price}</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={book.price}
+                  onChange={(e) => handleInputChange(book, 'newPrice', parseFloat(e.target.value))}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  defaultChecked={book.preorder}
+                  onChange={(e) => handleInputChange(book, 'preorder', e.target.checked ? 1 : 0)}
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  defaultValue={book.preorder_date ? book.preorder_date.split('T')[0] : ''}
+                  onChange={(e) => handleInputChange(book, 'preorderDate', e.target.value)}
+                />
+              </td>
+              <td>
+                <button onClick={() => handleUpdate('book', book)}>Update</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <h3>Stationery</h3>
-      {renderStockTable(filteredStationery, 'stationery')}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Current Quantity</th>
+            <th>New Quantity</th>
+            <th>Current Price</th>
+            <th>New Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredStationery.map(item => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.title}</td>
+              <td>{item.stock}</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={item.stock}
+                  onChange={(e) => handleInputChange(item, 'newStock', parseInt(e.target.value))}
+                />
+              </td>
+              <td>{item.price}</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  defaultValue={item.price}
+                  onChange={(e) => handleInputChange(item, 'newPrice', parseFloat(e.target.value))}
+                />
+              </td>
+              <td>
+                <button onClick={() => handleUpdate('stationery', item)}>Update</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './BookStore.css';
 import QuantityPopup from './QuantityPopup';
+import './BookStore.css'; // Ensure this path is correct
 
 const StationeryItem = ({ item }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);

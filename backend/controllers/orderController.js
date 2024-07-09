@@ -6,19 +6,27 @@ const createOrder = async (req, res) => {
   const { userId, total, name, address, email, phone, city, postalCode, province, district, area, items } = req.body;
 
   try {
+    // Check if any required field is missing
     if (!userId || !total || !name || !address || !email || !phone || !city || !postalCode || !province || !district || !area || !items) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Create the order
     const orderId = await Order.create(userId, total, name, address, email, phone, city, postalCode, province, district, area);
 
     for (const item of items) {
+      // Add order item and update stock
       await Order.addOrderItem(orderId, item.id, item.quantity, item.type);
 
       if (item.type === 'book') {
         const book = await Book.findById(item.id);
         const newStock = book.stock - item.quantity;
         await Book.updateStock(item.id, newStock);
+
+        // Handle pre-order scenario
+        if (newStock <= 0) {
+          await Book.updatePreorder(item.id, 1, new Date().toISOString().split('T')[0]); // Set preorder flag and date
+        }
       } else if (item.type === 'stationery') {
         const stationery = await Stationery.findById(item.id);
         const newStock = stationery.stock - item.quantity;

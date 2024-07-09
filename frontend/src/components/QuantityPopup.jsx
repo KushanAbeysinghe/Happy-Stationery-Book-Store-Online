@@ -10,15 +10,20 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
 
   return (
     <div className="popup">
-      <h3>Add {item.title} to Cart</h3>
-      <input
-        type="number"
-        min="1"
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-      />
-      <button onClick={handleAddToCart}>Add to Cart</button>
-      <button onClick={onClose}>Close</button>
+      <div className="popup-inner">
+        <h2>{item.title}</h2>
+        <p>Price: ${item.price}</p>
+        <p>Stock: {item.stock}</p>
+        <input
+          type="number"
+          min="1"
+          max={item.stock}
+          value={quantity}
+          onChange={(e) => setQuantity(parseInt(e.target.value))}
+        />
+        <button onClick={handleAddToCart}>Add to Cart</button>
+        <button onClick={onClose}>Close</button>
+      </div>
     </div>
   );
 };
