@@ -25,18 +25,22 @@ const Book = ({ book }) => {
   return (
     <div className="book-item">
       <h3>{book.title}</h3>
-      {book.images[selectedImage] && <img src={book.images[selectedImage]} alt={book.title} style={{ width: '200px', height: 'auto' }} />}
-      <div>
-        {book.images.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Book ${index + 1}`}
-            style={{ width: '50px', height: 'auto', cursor: 'pointer', margin: '5px' }}
-            onClick={() => handleImageClick(index)}
-          />
-        ))}
-      </div>
+      {book.images && book.images.length > 0 && (
+        <div className="image-gallery">
+          <img src={book.images[selectedImage]} alt={book.title} style={{ width: '200px', height: 'auto' }} />
+          <div className="image-thumbnails">
+            {book.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Book ${index + 1}`}
+                className={`thumbnail ${selectedImage === index ? 'selected' : ''}`}
+                onClick={() => handleImageClick(index)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
       <p>Author: {book.author}</p>
       <p>Price: ${book.price}</p>
       <p>
@@ -54,11 +58,13 @@ const Book = ({ book }) => {
         <button onClick={() => setIsPopupOpen(true)}>Add to Cart</button>
       )}
       {isPopupOpen && (
-        <QuantityPopup
-          item={book}
-          onClose={() => setIsPopupOpen(false)}
-          onAddToCart={addToCart}
-        />
+        <div className="popup-overlay">
+          <QuantityPopup
+            item={book}
+            onClose={() => setIsPopupOpen(false)}
+            onAddToCart={addToCart}
+          />
+        </div>
       )}
     </div>
   );

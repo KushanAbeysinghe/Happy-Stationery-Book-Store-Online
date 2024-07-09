@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './BookStore.css'; // Ensure this path is correct
 
 const QuantityPopup = ({ item, onClose, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
@@ -9,8 +10,8 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
   };
 
   return (
-    <div className="popup">
-      <div className="popup-inner">
+    <div className="popup-overlay">
+      <div className="popup-content">
         <h2>{item.title}</h2>
         <p>Price: ${item.price}</p>
         <p>Stock: {item.stock}</p>

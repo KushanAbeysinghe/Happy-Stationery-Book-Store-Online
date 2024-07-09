@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Book from './Book';
+import QuantityPopup from './QuantityPopup';
+import './BookStore.css'; // Ensure this path is correct
 
 const BookStore = () => {
   const [books, setBooks] = useState([]);
@@ -10,6 +12,7 @@ const BookStore = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedBook, setSelectedBook] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +38,26 @@ const BookStore = () => {
   const booksToDisplay = selectedCategory
     ? filteredBooks.filter(book => book.category_id === selectedCategory)
     : filteredBooks;
+
+  const handleAddToCart = (book) => {
+    setSelectedBook(book);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedBook(null);
+  };
+
+  const addToCart = (item, quantity) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(cartItem => cartItem.id === item.id && cartItem.type === 'book');
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.push({ ...item, quantity, type: 'book' });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Book added to cart');
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -69,12 +92,19 @@ const BookStore = () => {
         <h3>Books</h3>
         {booksToDisplay.length > 0 ? (
           booksToDisplay.map(book => (
-            <Book key={book.id} book={book} />
+            <Book key={book.id} book={book} onAddToCart={handleAddToCart} />
           ))
         ) : (
           <div>No books available</div>
         )}
       </div>
+      {selectedBook && (
+        <QuantityPopup
+          item={selectedBook}
+          onClose={handleClosePopup}
+          onAddToCart={addToCart}
+        />
+      )}
     </div>
   );
 };
