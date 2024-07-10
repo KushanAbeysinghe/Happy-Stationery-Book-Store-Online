@@ -56,4 +56,14 @@ const transferPreorderStock = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBooks, updateBook, getPreorderBooks, upload: upload.array('images', 3), transferPreorderStock };
+const transferPreorderStockManually = async (req, res) => {
+  try {
+    const updatedRows = await Book.transferPreorderStock();
+    res.status(200).json({ message: `Transferred preorder stock for ${updatedRows} books` });
+  } catch (error) {
+    console.error('Error transferring preorder stock:', error);
+    res.status(500).json({ message: 'Error transferring preorder stock', error });
+  }
+};
+
+module.exports = { createBook, getBooks, updateBook, getPreorderBooks, upload: upload.array('images', 3), transferPreorderStock,transferPreorderStockManually  };
