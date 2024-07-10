@@ -1,38 +1,21 @@
-import React, { useState } from 'react';
-import QuantityPopup from './QuantityPopup';
+import React from 'react';
 import './BookStore.css'; // Ensure this path is correct
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const StationeryItem = ({ item }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  const addToCart = (item, quantity) => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const existingItem = cart.find(cartItem => cartItem.id === item.id && cartItem.type === 'stationery');
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.push({ ...item, quantity, type: 'stationery' });
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Stationery item added to cart');
-  };
-
+const StationeryItem = ({ item, onAddToCart }) => {
   return (
-    <div className="book-item">
-      <h3>{item.title}</h3>
-      {item.image && <img src={item.image} alt={item.title} style={{ width: '200px', height: 'auto' }} />}
-      <p>Price: LKR {item.price}</p>
-      <p>Stock: {item.stock > 0 ? item.stock : 'Out of stock'}</p>
-      {item.stock > 0 && (
-        <button onClick={() => setIsPopupOpen(true)}>Add to Cart</button>
+    <div className="card book-card h-100">
+      {item.image && (
+        <img src={item.image} alt={item.title} className="card-img-top book-image" />
       )}
-      {isPopupOpen && (
-        <QuantityPopup
-          item={item}
-          onClose={() => setIsPopupOpen(false)}
-          onAddToCart={addToCart}
-        />
-      )}
+      <div className="card-body">
+        <h5 className="card-title">{item.title}</h5>
+        <p className="card-text">Price: LKR {item.price}</p>
+        <p className="card-text">Stock: {item.stock > 0 ? item.stock : 'Out of stock'}</p>
+        {item.stock > 0 && (
+          <button className="btn btn-success" onClick={() => onAddToCart(item)}>Add to Cart</button>
+        )}
+      </div>
     </div>
   );
 };

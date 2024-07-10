@@ -68,3 +68,64 @@
 .image-thumbnails img.selected {
   border: 1px solid #007bff;
 }
+
+.book-card {
+  transition: transform 0.2s;
+}
+
+.book-card:hover {
+  transform: scale(1.05);
+}
+
+.book-image {
+  height: 300px; /* Adjust height as needed */
+  object-fit: cover;
+}
+
+.book-rating {
+  margin-top: 5px;
+}
+
+.card-body {
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.text-warning {
+  color: #ffc107 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.price-slider {
+  margin-top: 20px;
+}
+
+.price-slider .rc-slider {
+  margin-bottom: 20px;
+}
+
+.price-slider .d-flex {
+  justify-content: space-between;
+}
+
+.list-group-item {
+  transition: background-color 0.3s ease, font-weight 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  cursor: pointer;
+}
