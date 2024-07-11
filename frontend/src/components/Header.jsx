@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaSearch, FaShoppingCart, FaHome } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from 'react-router-dom';
+import logo from '../components/Logo.png'; // Adjust the path as necessary
 
 const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
   const navigate = useNavigate();
@@ -15,9 +16,9 @@ const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
       <header className="header bg-warning" style={styles.header}>
         <div className="container d-flex align-items-center" style={styles.container}>
           <div className="logo d-flex align-items-center" style={styles.logo}>
-            <img src="path/to/your/logo.png" alt="Happy Store" style={styles.logoImg} />
-            <span style={styles.logoText}>Happy Store</span>
-            <span style={styles.logoSubtext}>Stationery and Books</span>
+            <img src={logo} alt="Happy Store" style={styles.logoImg} />
+            {/* <span style={styles.logoText}>Happy Store</span>
+            <span style={styles.logoSubtext}>Stationery and Books</span> */}
           </div>
           <div className="search-bar d-flex align-items-center flex-grow-1 mx-3" style={styles.searchBar}>
             <FaHome style={styles.homeIcon} onClick={() => navigate('/')} />
@@ -68,8 +69,8 @@ const styles = {
     alignItems: 'center',
   },
   logoImg: {
-    width: '40px',
-    height: '40px',
+    width: 'auto',
+    height: '60px',
   },
   logoText: {
     fontSize: '24px',
