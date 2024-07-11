@@ -57,13 +57,13 @@ const AdminOrders = () => {
               <th style={{ border: '1px solid black', padding: '8px' }}>Address</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Email</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Phone</th>
-              <th style={{ border: '1px solid black', padding: '8px' }}>City</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Postal Code</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Province</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>District</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Area</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Items</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Order Date</th>
+              <th style={{ border: '1px solid black', padding: '8px' }}>Payment Method</th>
               <th style={{ border: '1px solid black', padding: '8px' }}>Status</th>
               {includeActions && <th style={{ border: '1px solid black', padding: '8px' }}>Actions</th>}
             </tr>
@@ -86,7 +86,6 @@ const AdminOrders = () => {
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.address}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.email}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.phone}</td>
-                  <td style={{ border: '1px solid black', padding: '8px' }}>{order.city}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.postal_code}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.province_name}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.district_name}</td>
@@ -103,6 +102,7 @@ const AdminOrders = () => {
                     </ul>
                   </td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{new Date(order.order_date).toLocaleString()}</td>
+                  <td style={{ border: '1px solid black', padding: '8px' }}>{order.payment_method}</td>
                   <td style={{ border: '1px solid black', padding: '8px' }}>{order.status}</td>
                   {includeActions && (
                     <td style={{ border: '1px solid black', padding: '8px' }}>

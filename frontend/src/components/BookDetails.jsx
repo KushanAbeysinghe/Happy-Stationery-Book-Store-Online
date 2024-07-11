@@ -4,7 +4,7 @@ import QuantityPopup from './QuantityPopup';
 import './BookDetails.css'; // Ensure this path is correct
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const BookDetails = ({ books }) => {
+const BookDetails = ({ books, updateCart }) => {
   const { id } = useParams();
   const book = books.find(book => book.id.toString() === id);
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const BookDetails = ({ books }) => {
       cart.push({ ...item, quantity, type: 'book' });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Book added to cart');
+    updateCart(cart);
   };
 
   return (

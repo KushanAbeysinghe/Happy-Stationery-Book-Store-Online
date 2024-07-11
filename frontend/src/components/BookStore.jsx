@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Book from './Book';
 import './BookStore.css'; // Ensure this path is correct
@@ -7,18 +6,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
-const BookStore = ({ books = [] }) => {  // Set default value for books prop
+const BookStore = ({ books = [], searchTerm, updateCart }) => {  // Set default value for books prop
   const [categories, setCategories] = useState([]);
   const [authors, setAuthors] = useState([]); // List of authors
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [inStock, setInStock] = useState(true);
   const [outOfStock, setOutOfStock] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +50,18 @@ const BookStore = ({ books = [] }) => {  // Set default value for books prop
     setPriceRange(value);
   };
 
+  const addToCart = (item, quantity) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(cartItem => cartItem.id === item.id && cartItem.type === 'book');
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.push({ ...item, quantity, type: 'book' });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(cart);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -64,20 +73,6 @@ const BookStore = ({ books = [] }) => {  // Set default value for books prop
   return (
     <div className="container">
       <h2 className="text-center my-4">Book Store</h2>
-      <div className="row mb-4">
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by title"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="col-md-4 text-right">
-          <button className="btn btn-primary" onClick={() => navigate('/cart')}>Go to Cart</button>
-        </div>
-      </div>
       <div className="row">
         <div className="col-md-3">
           <h3>Categories</h3>
@@ -140,7 +135,7 @@ const BookStore = ({ books = [] }) => {  // Set default value for books prop
             {filteredBooks.length > 0 ? (
               filteredBooks.map(book => (
                 <div className="col-md-4 mb-4" key={book.id}>
-                  <Book book={book} />
+                  <Book book={book} onAddToCart={addToCart} />
                 </div>
               ))
             ) : (

@@ -7,12 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
-const Stationery = () => {
+const Stationery = ({ searchTerm, updateCart }) => {
   const [stationeryItems, setStationeryItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [priceRange, setPriceRange] = useState([0, 5000]);
@@ -58,7 +57,8 @@ const Stationery = () => {
       cart.push({ ...item, quantity, type: 'stationery' });
     }
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Stationery item added to cart');
+    updateCart(cart);
+    setSelectedItem(null); // Close the popup after adding to cart
   };
 
   const handlePriceChange = (value) => {
@@ -76,17 +76,6 @@ const Stationery = () => {
   return (
     <div className="container">
       <h2 className="text-center my-4">Stationery Store</h2>
-      <div className="row mb-4">
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by title"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
       <div className="row">
         <div className="col-md-3">
           <h3>Categories</h3>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import CheckoutPopup from './PaymentPopup'; // Import the new popup component
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Checkout = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -11,7 +12,7 @@ const Checkout = () => {
   const [address, setAddress] = useState(user.address || '');
   const [email, setEmail] = useState(user.email || '');
   const [phone, setPhone] = useState(user.phone || '');
-  const [city, setCity] = useState(user.city || '');
+//   const [city, setCity] = useState(user.city || '');
   const [postalCode, setPostalCode] = useState(user.postalCode || '');
   const [province, setProvince] = useState(user.province || '');
   const [district, setDistrict] = useState(user.district || '');
@@ -25,6 +26,7 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState(null);
   const [bankDetails, setBankDetails] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('COD'); // New state for payment method
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,11 +100,12 @@ const Checkout = () => {
         address,
         email,
         phone,
-        city,
+        // city,
         postalCode,
         province,
         district,
         area,
+        paymentMethod, // Add the payment method to the order object
         items: cart.map(item => ({
           id: item.id,
           quantity: item.quantity,
@@ -114,19 +117,22 @@ const Checkout = () => {
       const { orderId } = response.data;
       setOrderId(orderId);
 
-      // Fetch bank details
-      const bankResponse = await api.get('/orders/bank-details');
-      setBankDetails(bankResponse.data);
-
-      // Show the popup
-      setIsPopupOpen(true);
+      // Fetch bank details if Bank Deposit is selected
+      if (paymentMethod === 'Bank Deposit') {
+        const bankResponse = await api.get('/orders/bank-details');
+        setBankDetails(bankResponse.data);
+        setIsPopupOpen(true);
+      } else {
+        alert('Order placed successfully');
+        navigate('/');
+      }
 
       // Clear the form fields
       setName('');
       setAddress('');
       setEmail('');
       setPhone('');
-      setCity('');
+    //   setCity('');
       setPostalCode('');
       setProvince('');
       setDistrict('');
@@ -139,74 +145,146 @@ const Checkout = () => {
   };
 
   return (
-    <div>
+    <div className="container mt-5">
       <h2>Checkout</h2>
-      <form onSubmit={(e) => { e.preventDefault(); handlePlaceOrder(); }}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="City"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Postal Code"
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-          required
-        />
-        <select value={province} onChange={(e) => setProvince(e.target.value)} required>
-          <option value="">Select Province</option>
-          {provinces.map(p => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-        <select value={district} onChange={(e) => setDistrict(e.target.value)} required>
-          <option value="">Select District</option>
-          {filteredDistricts.map(d => (
-            <option key={d.id} value={d.id}>{d.name}</option>
-          ))}
-        </select>
-        <select value={area} onChange={(e) => setArea(e.target.value)} required>
-          <option value="">Select Area</option>
-          {filteredAreas.map(a => (
-            <option key={a.id} value={a.id}>{a.name}</option>
-          ))}
-        </select>
-        <h3>Total: LKR {total.toFixed(2)}</h3>
-        <h3>Delivery Fee: LKR {deliveryFee.toFixed(2)}</h3>
-        <h3>Subtotal: LKR {(total + deliveryFee).toFixed(2)}</h3>
-        <button type="submit">Place Order</button>
-      </form>
+      <div className="row">
+        <div className="col-md-7">
+          <form onSubmit={(e) => { e.preventDefault(); handlePlaceOrder(); }} className="checkout-form">
+            <h4>Contact Details</h4>
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
+            <h4>Shipping Address</h4>
+
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Postal Code"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <select className="form-control" value={province} onChange={(e) => setProvince(e.target.value)} required>
+                <option value="">Select Province</option>
+                {provinces.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <select className="form-control" value={district} onChange={(e) => setDistrict(e.target.value)} required>
+                <option value="">Select District</option>
+                {filteredDistricts.map(d => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <select className="form-control" value={area} onChange={(e) => setArea(e.target.value)} required>
+                <option value="">Select City</option>
+                {filteredAreas.map(a => (
+                  <option key={a.id} value={a.id}>{a.name}</option>
+                ))}
+              </select>
+            </div>
+            <h4>Payment Method</h4>
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="cod"
+                name="paymentMethod"
+                value="COD"
+                checked={paymentMethod === 'COD'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <label className="form-check-label" htmlFor="cod">Cash on Delivery (COD)</label>
+            </div>
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="bankDeposit"
+                name="paymentMethod"
+                value="Bank Deposit"
+                checked={paymentMethod === 'Bank Deposit'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <label className="form-check-label" htmlFor="bankDeposit">Bank Deposit</label>
+            </div>
+            <button type="submit" className="btn btn-primary mt-3">Place Order</button>
+          </form>
+        </div>
+        <div className="col-md-5">
+          <div className="order-summary p-3">
+            <h4>Order Summary</h4>
+            <ul className="list-group mb-3">
+              {cart.map(item => (
+                <li className="list-group-item d-flex justify-content-between lh-condensed" key={item.id}>
+                  <div>
+                    <h6 className="my-0">{item.title}</h6>
+                    <small className="text-muted">{item.type === 'book' ? 'Book' : 'Stationery'}</small>
+                  </div>
+                  <span className="text-muted">LKR {item.price} x {item.quantity}</span>
+                </li>
+              ))}
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Total (LKR)</span>
+                <strong>{total.toFixed(2)}</strong>
+              </li>
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Delivery Fee (LKR)</span>
+                <strong>{deliveryFee.toFixed(2)}</strong>
+              </li>
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Subtotal (LKR)</span>
+                <strong>{(total + deliveryFee).toFixed(2)}</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       {isPopupOpen && (
         <CheckoutPopup
           orderId={orderId}
@@ -215,6 +293,33 @@ const Checkout = () => {
           onClose={() => setIsPopupOpen(false)}
         />
       )}
+      <style>
+        {`
+          .checkout-form .form-group {
+            margin-bottom: 1rem;
+          }
+
+          .order-summary {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+          }
+
+          .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .form-check-input {
+            margin-right: .5rem;
+          }
+
+          .form-check-label {
+            margin-bottom: 0;
+          }
+        `}
+      </style>
     </div>
   );
 };
