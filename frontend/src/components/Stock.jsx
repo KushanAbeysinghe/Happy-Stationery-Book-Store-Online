@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Nav, Tab, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Stock = () => {
   const [books, setBooks] = useState([]);
   const [stationery, setStationery] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStock = async () => {
@@ -29,12 +33,12 @@ const Stock = () => {
       const preorderDate = item.preorderDate || item.preorder_date;
 
       if (type === 'book') {
-        await api.put(`/books/${item.id}`, { 
-          stock: updatedStock, 
-          price: updatedPrice, 
-          preorder: item.preorder, 
-          preorderDate: preorderDate, 
-          preorderedStock: preorderedStock 
+        await api.put(`/books/${item.id}`, {
+          stock: updatedStock,
+          price: updatedPrice,
+          preorder: item.preorder,
+          preorderDate: preorderDate,
+          preorderedStock: preorderedStock
         });
       } else if (type === 'stationery') {
         await api.put(`/stationery/${item.id}`, { stock: updatedStock, price: updatedPrice });
@@ -64,126 +68,180 @@ const Stock = () => {
   const filteredStationery = stationery.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div>
-      <h2>Stock Management</h2>
-      <input
-        type="text"
-        placeholder="Search by title"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <h3>Books</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Current Quantity</th>
-            <th>New Quantity</th>
-            <th>Current Price</th>
-            <th>New Price</th>
-            <th>Preorder</th>
-            <th>Preorder Date</th>
-            <th>Preordered Stock</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBooks.map(book => (
-            <tr key={book.id}>
-              <td>{book.id}</td>
-              <td>{book.title}</td>
-              <td>{book.stock}</td>
-              <td>
+    <Container className="mt-5">
+      <Tab.Container defaultActiveKey="stock" onSelect={(key) => navigate(`/admin/${key}`)}>
+        <Nav variant="pills" className="justify-content-center mb-4">
+          <Nav.Item>
+            <Nav.Link eventKey="dashboard">Dashboard</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="orders">Orders</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="stock">Stock</Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <Row>
+          <Col>
+            <Tab.Content>
+              <Tab.Pane eventKey="stock">
+                <h2 className="text-center mb-4">Stock Management</h2>
                 <input
-                  type="number"
-                  min="0"
-                  defaultValue={book.stock}
-                  onChange={(e) => handleInputChange(book, 'newStock', parseInt(e.target.value))}
+                  type="text"
+                  placeholder="Search by title"
+                  className="form-control mb-3"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-              </td>
-              <td>{book.price}</td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  defaultValue={book.price}
-                  onChange={(e) => handleInputChange(book, 'newPrice', parseFloat(e.target.value))}
-                />
-              </td>
-              <td>
-                <input
-                  type="checkbox"
-                  defaultChecked={book.preorder}
-                  onChange={(e) => handleInputChange(book, 'preorder', e.target.checked ? 1 : 0)}
-                />
-              </td>
-              <td>
-                <input
-                  type="date"
-                  defaultValue={book.preorder_date ? book.preorder_date.split('T')[0] : ''}
-                  onChange={(e) => handleInputChange(book, 'preorderDate', e.target.value)}
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  defaultValue={book.preordered_stock}
-                  onChange={(e) => handleInputChange(book, 'preorderedStock', parseInt(e.target.value))}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleUpdate('book', book)}>Update</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h3>Stationery</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Current Quantity</th>
-            <th>New Quantity</th>
-            <th>Current Price</th>
-            <th>New Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredStationery.map(item => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.title}</td>
-              <td>{item.stock}</td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  defaultValue={item.stock}
-                  onChange={(e) => handleInputChange(item, 'newStock', parseInt(e.target.value))}
-                />
-              </td>
-              <td>{item.price}</td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  defaultValue={item.price}
-                  onChange={(e) => handleInputChange(item, 'newPrice', parseFloat(e.target.value))}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleUpdate('stationery', item)}>Update</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                <h3>Books</h3>
+                <div className="table-responsive">
+                  <table className="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Current Quantity</th>
+                        <th>New Quantity</th>
+                        <th>Current Price</th>
+                        <th>New Price</th>
+                        <th>Preorder</th>
+                        <th>Preorder Date</th>
+                        <th>Preordered Stock</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredBooks.map(book => (
+                        <tr key={book.id}>
+                          <td>{book.id}</td>
+                          <td>{book.title}</td>
+                          <td>{book.stock}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              defaultValue={book.stock}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(book, 'newStock', parseInt(e.target.value))}
+                            />
+                          </td>
+                          <td>{book.price}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              defaultValue={book.price}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(book, 'newPrice', parseFloat(e.target.value))}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              defaultChecked={book.preorder}
+                              onChange={(e) => handleInputChange(book, 'preorder', e.target.checked ? 1 : 0)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="date"
+                              defaultValue={book.preorder_date ? book.preorder_date.split('T')[0] : ''}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(book, 'preorderDate', e.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              defaultValue={book.preordered_stock}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(book, 'preorderedStock', parseInt(e.target.value))}
+                            />
+                          </td>
+                          <td>
+                            <button className="btn btn-primary" onClick={() => handleUpdate('book', book)}>Update</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <h3>Stationery</h3>
+                <div className="table-responsive">
+                  <table className="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Current Quantity</th>
+                        <th>New Quantity</th>
+                        <th>Current Price</th>
+                        <th>New Price</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredStationery.map(item => (
+                        <tr key={item.id}>
+                          <td>{item.id}</td>
+                          <td>{item.title}</td>
+                          <td>{item.stock}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              defaultValue={item.stock}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(item, 'newStock', parseInt(e.target.value))}
+                            />
+                          </td>
+                          <td>{item.price}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              defaultValue={item.price}
+                              className="form-control"
+                              onChange={(e) => handleInputChange(item, 'newPrice', parseFloat(e.target.value))}
+                            />
+                          </td>
+                          <td>
+                            <button className="btn btn-primary" onClick={() => handleUpdate('stationery', item)}>Update</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+      <style>
+        {`
+          h2 {
+            margin-bottom: 2rem;
+          }
+          h3 {
+            margin-top: 2rem;
+          }
+          .table-responsive {
+            margin-top: 1rem;
+          }
+          .nav-pills .nav-link {
+            margin: 0 5px;
+          }
+          .nav-pills .nav-link.active {
+            background-color: #007bff;
+          }
+          .form-control {
+            margin-bottom: 1rem;
+          }
+        `}
+      </style>
+    </Container>
   );
 };
 

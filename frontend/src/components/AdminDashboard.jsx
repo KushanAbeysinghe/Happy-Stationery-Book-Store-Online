@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Nav, Tab, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
@@ -24,6 +27,7 @@ const AdminDashboard = () => {
     image: null
   });
   const [stationeryItems, setStationeryItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +57,6 @@ const AdminDashboard = () => {
       await api.post('/categories', { name: newCategory });
       alert('Category added successfully');
       setNewCategory('');
-      // Refresh categories
       const categoriesResponse = await api.get('/categories');
       setCategories(categoriesResponse.data);
     } catch (error) {
@@ -71,7 +74,6 @@ const AdminDashboard = () => {
       await api.post('/stationery-categories', { name: newStationeryCategory });
       alert('Stationery category added successfully');
       setNewStationeryCategory('');
-      // Refresh stationery categories
       const stationeryCategoriesResponse = await api.get('/stationery-categories');
       setStationeryCategories(stationeryCategoriesResponse.data);
     } catch (error) {
@@ -119,7 +121,6 @@ const AdminDashboard = () => {
         images: [],
         preorder: false
       });
-      // Refresh books
       const booksResponse = await api.get('/books');
       setBooks(booksResponse.data);
     } catch (error) {
@@ -161,7 +162,6 @@ const AdminDashboard = () => {
         categoryId: '',
         image: null
       });
-      // Refresh stationery items
       const stationeryResponse = await api.get('/stationery');
       setStationeryItems(stationeryResponse.data);
     } catch (error) {
@@ -169,187 +169,279 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSelect = (key) => {
+    if (key === 'orders') {
+      navigate('/admin/orders');
+    } else if (key === 'stock') {
+      navigate('/admin/stock');
+    }
+  };
+
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
+    <Container className="mt-5">
+      <Tab.Container defaultActiveKey="dashboard" onSelect={handleSelect}>
+        <Nav variant="pills" className="justify-content-center mb-4">
+          <Nav.Item>
+            <Nav.Link eventKey="dashboard">Dashboard</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="orders">Orders</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="stock">Stock</Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <Row>
+          <Col>
+            <Tab.Content>
+              <Tab.Pane eventKey="dashboard">
+                <h2 className="text-center mb-4">Admin Dashboard</h2>
 
-      <h3>Add New Category</h3>
-      <form onSubmit={handleCategorySubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Category Name"
-          value={newCategory}
-          onChange={handleCategoryChange}
-          required
-        />
-        <button type="submit">Add Category</button>
-      </form>
+                <div className="row">
+                  <div className="col-md-6 mb-4">
+                    <h3>Add New Category</h3>
+                    <form onSubmit={handleCategorySubmit}>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="name"
+                          className="form-control"
+                          placeholder="Category Name"
+                          value={newCategory}
+                          onChange={handleCategoryChange}
+                          required
+                        />
+                      </div>
+                      <button className="btn btn-primary" type="submit">Add Category</button>
+                    </form>
+                  </div>
 
-      <h3>Add New Stationery Category</h3>
-      <form onSubmit={handleStationeryCategorySubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Stationery Category Name"
-          value={newStationeryCategory}
-          onChange={handleStationeryCategoryChange}
-          required
-        />
-        <button type="submit">Add Stationery Category</button>
-      </form>
+                  <div className="col-md-6 mb-4">
+                    <h3>Add New Stationery Category</h3>
+                    <form onSubmit={handleStationeryCategorySubmit}>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="name"
+                          className="form-control"
+                          placeholder="Stationery Category Name"
+                          value={newStationeryCategory}
+                          onChange={handleStationeryCategoryChange}
+                          required
+                        />
+                      </div>
+                      <button className="btn btn-primary" type="submit">Add Stationery Category</button>
+                    </form>
+                  </div>
+                </div>
 
-      <h3>Add New Book</h3>
-      <form onSubmit={handleBookSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={newBook.title}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="text"
-          name="author"
-          placeholder="Author"
-          value={newBook.author}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={newBook.price}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="stock"
-          placeholder="Stock"
-          value={newBook.stock}
-          onChange={handleInputChange}
-          required
-        />
-        <select
-          name="categoryId"
-          value={newBook.categoryId}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Select Category</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        <input type="file" name="images" onChange={handleFileChange} multiple required />
-        {/* <label>
-          Preorder
-          <input
-            type="checkbox"
-            name="preorder"
-            checked={newBook.preorder}
-            onChange={handleInputChange}
-          />
-        </label> */}
-        <button type="submit">Add Book</button>
-      </form>
+                <div className="row">
+                  <div className="col-md-6 mb-4">
+                    <h3>Add New Book</h3>
+                    <form onSubmit={handleBookSubmit}>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="title"
+                          className="form-control"
+                          placeholder="Title"
+                          value={newBook.title}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="author"
+                          className="form-control"
+                          placeholder="Author"
+                          value={newBook.author}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="number"
+                          name="price"
+                          className="form-control"
+                          placeholder="Price"
+                          value={newBook.price}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="number"
+                          name="stock"
+                          className="form-control"
+                          placeholder="Stock"
+                          value={newBook.stock}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <select
+                          name="categoryId"
+                          className="form-control"
+                          value={newBook.categoryId}
+                          onChange={handleInputChange}
+                          required
+                        >
+                          <option value="">Select Category</option>
+                          {categories.map(category => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <input type="file" name="images" onChange={handleFileChange} multiple required className="form-control-file" />
+                      </div>
+                      <button className="btn btn-primary" type="submit">Add Book</button>
+                    </form>
+                  </div>
 
-      <h3>Add New Stationery Item</h3>
-      <form onSubmit={handleStationerySubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={newStationery.title}
-          onChange={handleStationeryInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={newStationery.price}
-          onChange={handleStationeryInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="stock"
-          placeholder="Stock"
-          value={newStationery.stock}
-          onChange={handleStationeryInputChange}
-          required
-        />
-        <select
-          name="categoryId"
-          value={newStationery.categoryId}
-          onChange={handleStationeryInputChange}
-          required
-        >
-          <option value="">Select Category</option>
-          {stationeryCategories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        <input type="file" name="image" onChange={handleStationeryFileChange} required />
-        <button type="submit">Add Stationery Item</button>
-      </form>
+                  <div className="col-md-6 mb-4">
+                    <h3>Add New Stationery Item</h3>
+                    <form onSubmit={handleStationerySubmit}>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="title"
+                          className="form-control"
+                          placeholder="Title"
+                          value={newStationery.title}
+                          onChange={handleStationeryInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="number"
+                          name="price"
+                          className="form-control"
+                          placeholder="Price"
+                          value={newStationery.price}
+                          onChange={handleStationeryInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="number"
+                          name="stock"
+                          className="form-control"
+                          placeholder="Stock"
+                          value={newStationery.stock}
+                          onChange={handleStationeryInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <select
+                          name="categoryId"
+                          className="form-control"
+                          value={newStationery.categoryId}
+                          onChange={handleStationeryInputChange}
+                          required
+                        >
+                          <option value="">Select Category</option>
+                          {stationeryCategories.map(category => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <input type="file" name="image" onChange={handleStationeryFileChange} required className="form-control-file" />
+                      </div>
+                      <button className="btn btn-primary" type="submit">Add Stationery Item</button>
+                    </form>
+                  </div>
+                </div>
 
-      <h3>Books</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Category</th>
-            <th>Preorder</th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.map(book => (
-            <tr key={book.id}>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>${book.price}</td>
-              <td>{book.stock}</td>
-              <td>{categories.find(cat => cat.id === book.category_id)?.name}</td>
-              <td>{book.preorder ? 'Yes' : 'No'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <h3 className="mt-5">Books</h3>
+                <div className="table-responsive">
+                  <table className="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Preorder</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {books.map(book => (
+                        <tr key={book.id}>
+                          <td>{book.title}</td>
+                          <td>{book.author}</td>
+                          <td>LKR {book.price}</td>
+                          <td>{book.stock}</td>
+                          <td>{categories.find(cat => cat.id === book.category_id)?.name}</td>
+                          <td>{book.preorder ? 'Yes' : 'No'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-      <h3>Stationery</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Category</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stationeryItems.map(item => (
-            <tr key={item.id}>
-              <td>{item.title}</td>
-              <td>LKR {item.price}</td>
-              <td>{item.stock}</td>
-              <td>{stationeryCategories.find(cat => cat.id === item.category_id)?.name}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                <h3 className="mt-5">Stationery</h3>
+                <div className="table-responsive">
+                  <table className="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stationeryItems.map(item => (
+                        <tr key={item.id}>
+                          <td>{item.title}</td>
+                          <td>LKR {item.price}</td>
+                          <td>{item.stock}</td>
+                          <td>{stationeryCategories.find(cat => cat.id === item.category_id)?.name}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+      <style>
+        {`
+          .form-group {
+            margin-bottom: 1rem;
+          }
+          h3 {
+            margin-top: 2rem;
+          }
+          .table-responsive {
+            margin-top: 1rem;
+          }
+          .nav-pills .nav-link {
+            margin: 0 5px;
+          }
+          .nav-pills .nav-link.active {
+            background-color: #007bff;
+          }
+        `}
+      </style>
+    </Container>
   );
 };
 
