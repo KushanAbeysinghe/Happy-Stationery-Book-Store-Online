@@ -54,11 +54,21 @@ const BookDetails = ({ books, updateCart }) => {
           <p><strong>Author:</strong> {book.author}</p>
           <p><strong>Price:</strong> LKR {book.price}</p>
           <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-          <p><strong>Publisher:</strong> {book.publisher}</p>
+          {book.stock === 0 && book.preorder && (
+            <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
+          )}
+          {/* <p><strong>Publisher:</strong> {book.publisher}</p>
           <p><strong>ISBN:</strong> {book.isbn}</p>
-          <p><strong>ISBN 13:</strong> {book.isbn13}</p>
+          <p><strong>ISBN 13:</strong> {book.isbn13}</p> */}
           <div className="d-flex">
-            <button className="btn btn-primary mr-2" onClick={() => setIsPopupOpen(true)}>Add to Cart</button>
+            <button
+              className="btn btn-primary mr-2"
+              onClick={() => setIsPopupOpen(true)}
+              disabled={book.stock === 0}
+              style={{ cursor: book.stock === 0 ? 'not-allowed' : 'pointer' }}
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>

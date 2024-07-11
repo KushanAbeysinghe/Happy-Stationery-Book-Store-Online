@@ -15,6 +15,8 @@ const Stationery = ({ searchTerm, updateCart }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [inStock, setInStock] = useState(true);
+  const [outOfStock, setOutOfStock] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,13 +34,14 @@ const Stationery = ({ searchTerm, updateCart }) => {
     fetchData();
   }, []);
 
-  const filteredStationery = stationeryItems.filter(item =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredStationery = stationeryItems.filter(item => {
+    const matchesTitle = item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory ? item.category_id === selectedCategory : true;
+    const matchesPrice = item.price >= priceRange[0] && item.price <= priceRange[1];
+    const matchesStock = (inStock && item.stock > 0) || (outOfStock && item.stock === 0);
 
-  const itemsToDisplay = selectedCategory
-    ? filteredStationery.filter(item => item.category_id === selectedCategory)
-    : filteredStationery.filter(item => item.price >= priceRange[0] && item.price <= priceRange[1]);
+    return matchesTitle && matchesCategory && matchesPrice && matchesStock;
+  });
 
   const handleAddToCart = (item) => {
     setSelectedItem(item);
@@ -87,6 +90,27 @@ const Stationery = ({ searchTerm, updateCart }) => {
               </li>
             ))}
           </ul>
+          <h3 className="mt-4">Filter by Stock</h3>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="inStock"
+              checked={inStock}
+              onChange={() => setInStock(!inStock)}
+            />
+            <label className="form-check-label" htmlFor="inStock">In Stock</label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="outOfStock"
+              checked={outOfStock}
+              onChange={() => setOutOfStock(!outOfStock)}
+            />
+            <label className="form-check-label" htmlFor="outOfStock">Out of Stock</label>
+          </div>
           <h3 className="mt-4">Filter by Price</h3>
           <div className="price-slider">
             <Slider
@@ -105,8 +129,8 @@ const Stationery = ({ searchTerm, updateCart }) => {
         <div className="col-md-9">
           <h3>Stationery Items</h3>
           <div className="row">
-            {itemsToDisplay.length > 0 ? (
-              itemsToDisplay.map(item => (
+            {filteredStationery.length > 0 ? (
+              filteredStationery.map(item => (
                 <div className="col-md-4 mb-4" key={item.id}>
                   <StationeryItem item={item} onAddToCart={handleAddToCart} />
                 </div>

@@ -4,15 +4,13 @@ import api from '../api';
 import CheckoutPopup from './PaymentPopup'; // Import the new popup component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Checkout = () => {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const Checkout = ({ cart, updateCart }) => {
   const user = JSON.parse(localStorage.getItem('user')) || {};
   const [total, setTotal] = useState(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
   const [name, setName] = useState(user.name || '');
   const [address, setAddress] = useState(user.address || '');
   const [email, setEmail] = useState(user.email || '');
   const [phone, setPhone] = useState(user.phone || '');
-//   const [city, setCity] = useState(user.city || '');
   const [postalCode, setPostalCode] = useState(user.postalCode || '');
   const [province, setProvince] = useState(user.province || '');
   const [district, setDistrict] = useState(user.district || '');
@@ -100,7 +98,6 @@ const Checkout = () => {
         address,
         email,
         phone,
-        // city,
         postalCode,
         province,
         district,
@@ -121,23 +118,22 @@ const Checkout = () => {
       if (paymentMethod === 'Bank Deposit') {
         const bankResponse = await api.get('/orders/bank-details');
         setBankDetails(bankResponse.data);
-        setIsPopupOpen(true);
-      } else {
-        alert('Order placed successfully');
-        navigate('/');
       }
 
-      // Clear the form fields
+      // Show the popup for all payment methods
+      setIsPopupOpen(true);
+
+      // Clear the form fields and update cart
       setName('');
       setAddress('');
       setEmail('');
       setPhone('');
-    //   setCity('');
       setPostalCode('');
       setProvince('');
       setDistrict('');
       setArea('');
       localStorage.removeItem('cart');
+      updateCart([]);
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place order');
@@ -182,7 +178,6 @@ const Checkout = () => {
               />
             </div>
             <h4>Shipping Address</h4>
-
             <div className="form-group">
               <input
                 type="text"
@@ -193,7 +188,6 @@ const Checkout = () => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <input
                 type="text"
