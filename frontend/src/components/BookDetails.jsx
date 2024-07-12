@@ -76,6 +76,9 @@ const BookDetails = ({ books, updateCart }) => {
           </button>
         </div>
       </div>
+      <br></br><br></br>
+      <br></br><br></br>
+
       {isPopupOpen && (
         <QuantityPopup
           item={book}

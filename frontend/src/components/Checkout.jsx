@@ -222,32 +222,6 @@ const Checkout = ({ cart, updateCart }) => {
                 ))}
               </select>
             </div>
-            <h4>Payment Method</h4>
-            <div className="form-check">
-              <input
-                type="radio"
-                className="form-check-input"
-                id="cod"
-                name="paymentMethod"
-                value="COD"
-                checked={paymentMethod === 'COD'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <label className="form-check-label" htmlFor="cod">Cash on Delivery (COD)</label>
-            </div>
-            <div className="form-check">
-              <input
-                type="radio"
-                className="form-check-input"
-                id="bankDeposit"
-                name="paymentMethod"
-                value="Bank Deposit"
-                checked={paymentMethod === 'Bank Deposit'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <label className="form-check-label" htmlFor="bankDeposit">Bank Deposit</label>
-            </div>
-            <button type="submit" className="btn btn-primary mt-3">Place Order</button>
           </form>
         </div>
         <div className="col-md-5">
@@ -276,9 +250,38 @@ const Checkout = ({ cart, updateCart }) => {
                 <strong>{(total + deliveryFee).toFixed(2)}</strong>
               </li>
             </ul>
+            <h4>Payment Method</h4>
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="cod"
+                name="paymentMethod"
+                value="COD"
+                checked={paymentMethod === 'COD'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <label className="form-check-label" htmlFor="cod">Cash on Delivery (COD)</label>
+            </div>
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="bankDeposit"
+                name="paymentMethod"
+                value="Bank Deposit"
+                checked={paymentMethod === 'Bank Deposit'}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <label className="form-check-label" htmlFor="bankDeposit">Bank Deposit</label>
+            </div>
+            <button type="button" className="btn btn-primary mt-3" onClick={handlePlaceOrder}>Place Order</button>
           </div>
         </div>
+        
       </div>
+      <br></br><br></br>
+      <br></br><br></br>
       {isPopupOpen && (
         <CheckoutPopup
           orderId={orderId}
@@ -311,6 +314,19 @@ const Checkout = ({ cart, updateCart }) => {
 
           .form-check-label {
             margin-bottom: 0;
+          }
+
+          @media (max-width: 768px) {
+            .order-summary .form-check {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+            }
+
+            .order-summary .btn {
+              width: 100%;
+              margin-top: 1rem;
+            }
           }
         `}
       </style>

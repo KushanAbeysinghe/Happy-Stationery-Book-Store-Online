@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaSearch, FaShoppingCart, FaHome } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../components/Logo.png'; // Adjust the path as necessary
 
-const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
+const Header = ({ totalItems, searchTerm, setSearchTerm, currentPath }) => {
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  const hideCartIcon = currentPath === '/checkout' || currentPath === '/cart';
+
   return (
     <div>
       <header className="header" style={styles.header}>
         <div className="container d-flex align-items-center" style={styles.container}>
-          <div className="logo d-flex align-items-center" style={styles.logo}>
+          <div className="logo d-flex align-items-center mx-auto" style={styles.logo}>
             <img src={logo} alt="Happy Store" style={styles.logoImg} />
-          
           </div>
           <div className="search-bar d-flex align-items-center flex-grow-1 mx-3" style={styles.searchBar}>
             <FaHome style={styles.homeIcon} onClick={() => navigate('/')} />
@@ -34,10 +35,12 @@ const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
             </button>
           </div>
           <div className="icons d-flex align-items-center" style={styles.icons}>
-            <div className="icon" style={styles.icon} onClick={() => navigate('/cart')}>
-              <FaShoppingCart />
-              <span className="icon-count" style={styles.iconCount}>{totalItems}</span>
-            </div>
+            {!hideCartIcon && (
+              <div className="icon cart-icon" style={styles.icon} onClick={() => navigate('/cart')}>
+                <FaShoppingCart />
+                <span className="icon-count" style={styles.iconCount}>{totalItems}</span>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -51,6 +54,31 @@ const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
           </li>
         </ul>
       </nav>
+      <style>
+        {`
+          @media (max-width: 991px) {
+            .header .container {
+              flex-direction: column;
+            }
+            .header .logo {
+              margin-bottom: 10px;
+            }
+            .header .icons {
+              position: fixed;
+              bottom: 10px;
+              right: 10px;
+              background: yellow;
+              border-radius: 50%;
+              padding: 10px;
+              z-index: 1000; /* Ensure the cart icon is above other elements */
+            }
+          }
+          .icon-count {
+            top: -10px !important; /* Adjust to ensure the count is visible */
+            right: -10px !important; /* Adjust to ensure the count is visible */
+          }
+        `}
+      </style>
     </div>
   );
 };

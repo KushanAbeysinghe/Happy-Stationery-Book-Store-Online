@@ -41,13 +41,11 @@ const Cart = ({ cart, updateCart }) => {
       <h2 className="text-center mb-4" style={styles.cartTitle}>My Shopping Cart</h2>
       {cart.length > 0 ? (
         <>
-          <table className="table table-bordered" style={styles.table}>
+          <table className="table table-hover" style={styles.table}>
             <thead style={styles.tableHead}>
               <tr>
                 <th style={styles.tableCell}>Description</th>
-                <th style={styles.tableCell}>Quantity</th>
-                <th style={styles.tableCell}>Remove</th>
-                <th style={styles.tableCell}>Price</th>
+                <th style={styles.tableCell}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -61,32 +59,53 @@ const Cart = ({ cart, updateCart }) => {
                     />
                     {item.type === 'book' ? 'Book' : 'Stationery'}: {item.title}
                   </td>
-                  <td style={styles.tableCell}>
+                  <td style={{ ...styles.tableCell, ...styles.actionsCell }}>
                     <div style={styles.quantityControls} className="d-flex align-items-center">
                       <button style={styles.quantityButton} className="btn btn-outline-primary btn-sm" onClick={() => decreaseQuantity(item.id)}>-</button>
                       <span style={styles.quantityText} className="mx-2">{item.quantity}</span>
                       <button style={styles.quantityButton} className="btn btn-outline-primary btn-sm" onClick={() => increaseQuantity(item.id)}>+</button>
                     </div>
-                  </td>
-                  <td style={styles.tableCell}>
                     <button style={styles.removeButton} className="btn btn-danger btn-sm" onClick={() => removeItem(item.id)}>Remove</button>
+                    <span style={styles.itemPrice}>${item.price}</span>
                   </td>
-                  <td style={styles.tableCell}>${item.price}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div style={styles.totalContainer} className="d-flex justify-content-end">
-            <div style={styles.totalText} className="text-right">
+          <div style={styles.totalContainer} className="d-flex justify-content-start">
+            <div style={styles.totalText} className="text-left">
               <h5>Subtotal: ${total.toFixed(2)}</h5>
               <h5>Total: ${total.toFixed(2)}</h5>
               <button style={styles.checkoutButton} className="btn btn-primary mt-3" onClick={() => navigate('/checkout')}>Checkout</button>
             </div>
           </div>
+      <br></br><br></br>
+      <br></br><br></br>
+          
         </>
       ) : (
         <p>Your cart is empty</p>
       )}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .table th, .table td {
+            display: block;
+            width: 100%;
+            text-align: center;
+          }
+          .table thead {
+            display: none;
+          }
+          .table tr {
+            margin-bottom: 1rem;
+            display: block;
+            border-bottom: 2px solid #dee2e6;
+          }
+          .table-hover tbody tr:hover {
+            background-color: #f5f5f5;
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -108,16 +127,18 @@ const styles = {
     backgroundColor: 'transparent',
     borderCollapse: 'collapse'
   },
-  tableBordered: {
-    border: '1px solid #dee2e6'
-  },
   tableHead: {
     backgroundColor: '#f8f9fa'
   },
   tableCell: {
     padding: '0.75rem',
-    verticalAlign: 'top',
+    verticalAlign: 'middle',
     borderTop: '1px solid #dee2e6'
+  },
+  actionsCell: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   itemImage: {
     width: '50px',
@@ -130,7 +151,8 @@ const styles = {
   },
   quantityButton: {
     border: '1px solid #ced4da',
-    padding: '0.25rem 0.5rem'
+    padding: '0.25rem 0.5rem',
+    borderRadius: '5px'
   },
   quantityText: {
     margin: '0 0.5rem'
@@ -139,17 +161,23 @@ const styles = {
     padding: '0.25rem 0.5rem',
     color: '#ffffff',
     backgroundColor: '#dc3545',
+    border: 'none',
+    borderRadius: '5px',
     cursor: 'pointer'
+  },
+  itemPrice: {
+    marginLeft: '10px'
   },
   totalContainer: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     marginTop: '1rem'
   },
   totalText: {
-    textAlign: 'right'
+    textAlign: 'left'
   },
   checkoutButton: {
-    marginTop: '1rem'
+    marginTop: '1rem',
+    borderRadius: '5px'
   }
 };
