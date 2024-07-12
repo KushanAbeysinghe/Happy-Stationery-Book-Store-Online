@@ -20,6 +20,8 @@ const upload = multer({ storage: storage });
 router.post('/stationery', upload.single('image'), StationeryController.createStationery);
 router.get('/stationery', StationeryController.getStationery);
 router.put('/stationery/:id', StationeryController.updateStationery); // Route to update stationery
+router.put('/stationery/price/:id', StationeryController.updateStationeryPrice);
+router.delete('/stationery/:id', StationeryController.deleteStationery);
 
 // Routes for stationery categories
 router.post('/stationery-categories', StationeryController.createCategory);

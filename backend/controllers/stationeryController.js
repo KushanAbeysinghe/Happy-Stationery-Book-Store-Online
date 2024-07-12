@@ -1,4 +1,19 @@
 const Stationery = require('../models/stationeryModel');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Setup multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const createStationery = async (req, res) => {
   const { title, price, stock, categoryId } = req.body;
@@ -34,4 +49,43 @@ const updateStationery = async (req, res) => {
   }
 };
 
-module.exports = { createStationery, getStationery, createCategory, getCategories, updateStationery };
+const updateStationeryPrice = async (req, res) => {
+  const { price } = req.body;
+  try {
+    const updatedRows = await Stationery.updatePrice(req.params.id, price);
+    if (updatedRows === 0) {
+      return res.status(404).json({ message: 'Stationery item not found' });
+    }
+    res.json({ message: 'Stationery item price updated successfully' });
+  } catch (error) {
+    console.error('Error updating stationery item price:', error);
+    res.status(500).json({ message: 'Error updating stationery item price', error });
+  }
+};
+
+const deleteStationery = async (req, res) => {
+  try {
+    const stationery = await Stationery.findById(req.params.id);
+    if (!stationery) {
+      return res.status(404).json({ message: 'Stationery item not found' });
+    }
+
+    const imageFile = stationery.image;
+
+    await Stationery.deleteById(req.params.id);
+
+    if (imageFile) {
+      const imagePath = path.join(__dirname, '../uploads', imageFile);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
+    res.json({ message: 'Stationery item deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting stationery item:', error);
+    res.status(500).json({ message: 'Error deleting stationery item', error });
+  }
+};
+
+module.exports = { createStationery, getStationery, createCategory, getCategories, updateStationery, updateStationeryPrice, deleteStationery };

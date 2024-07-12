@@ -1,6 +1,7 @@
 const Book = require('../models/bookModel');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 // Setup multer for file uploads
 const storage = multer.diskStorage({
@@ -45,7 +46,55 @@ const updateBook = async (req, res) => {
   }
 };
 
-// New function to transfer preordered stock to available stock
+const updateBookPrice = async (req, res) => {
+  const { price } = req.body;
+  try {
+    const updatedRows = await Book.updatePrice(req.params.id, price);
+    if (updatedRows === 0) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.json({ message: 'Book price updated successfully' });
+  } catch (error) {
+    console.error('Error updating book price:', error);
+    res.status(500).json({ message: 'Error updating book price', error });
+  }
+};
+
+const deleteBook = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const isReferenced = await Book.isReferenced(id);
+    if (isReferenced) {
+      return res.status(400).json({ message: 'Cannot delete book because it is referenced in order items' });
+    }
+
+    const book = await Book.findById(id);
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    // Delete book images from the file system
+    if (book.images) {
+      book.images.forEach(image => {
+        fs.unlink(path.join(__dirname, '..', 'uploads', path.basename(image)), err => {
+          if (err) {
+            console.error(`Failed to delete image file: ${image}`, err);
+          }
+        });
+      });
+    }
+
+    const deletedRows = await Book.deleteById(id);
+    if (deletedRows === 0) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.json({ message: 'Book deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting book:', error);
+    res.status(500).json({ message: 'Error deleting book', error });
+  }
+};
+
 const transferPreorderStock = async (req, res) => {
   try {
     await Book.transferPreorderStock();
@@ -66,4 +115,4 @@ const transferPreorderStockManually = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBooks, updateBook, getPreorderBooks, upload: upload.array('images', 3), transferPreorderStock,transferPreorderStockManually  };
+module.exports = { createBook, getBooks, updateBook, updateBookPrice, deleteBook, getPreorderBooks, upload: upload.array('images', 3), transferPreorderStock, transferPreorderStockManually };

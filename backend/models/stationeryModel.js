@@ -49,6 +49,14 @@ const Stationery = {
     const [result] = await db.execute(query, params);
     return result.affectedRows;
   },
+  updatePrice: async (id, price) => {
+    const [result] = await db.execute('UPDATE stationery SET price = ? WHERE id = ?', [price, id]);
+    return result.affectedRows;
+  },
+  deleteById: async (id) => {
+    const [result] = await db.execute('DELETE FROM stationery WHERE id = ?', [id]);
+    return result.affectedRows;
+  },
   createCategory: async (name) => {
     const [result] = await db.execute(
       'INSERT INTO stationery_categories (name) VALUES (?)',

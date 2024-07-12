@@ -32,13 +32,25 @@ const Book = {
   },
   findById: async (id) => {
     const [rows] = await db.execute('SELECT * FROM books WHERE id = ?', [id]);
-    return rows[0];
+    const book = rows[0];
+    if (book) {
+      book.images = [
+        book.image1 ? `http://localhost:5000/uploads/${book.image1}` : null,
+        book.image2 ? `http://localhost:5000/uploads/${book.image2}` : null,
+        book.image3 ? `http://localhost:5000/uploads/${book.image3}` : null
+      ].filter(image => image !== null);
+    }
+    return book;
   },
   updateStockAndPrice: async (id, stock, price, preorder = false, preorderDate = null, preorderedStock = 0) => {
     const [result] = await db.execute(
       'UPDATE books SET stock = ?, price = ?, preorder = ?, preorder_date = ?, preordered_stock = ? WHERE id = ?',
       [stock !== undefined ? stock : null, price !== undefined ? price : null, preorder, preorderDate, preorderedStock, id]
     );
+    return result.affectedRows;
+  },
+  updatePrice: async (id, price) => {
+    const [result] = await db.execute('UPDATE books SET price = ? WHERE id = ?', [price, id]);
     return result.affectedRows;
   },
   updateStock: async (id, stock) => {
@@ -58,6 +70,14 @@ const Book = {
       SET stock = stock + preordered_stock, preordered_stock = 0, preorder = 0, preorder_date = NULL
       WHERE preorder = 1 AND preorder_date = CURDATE()
     `);
+    return result.affectedRows;
+  },
+  isReferenced: async (id) => {
+    const [rows] = await db.execute('SELECT COUNT(*) AS count FROM order_items WHERE book_id = ?', [id]);
+    return rows[0].count > 0;
+  },
+  deleteById: async (id) => {
+    const [result] = await db.execute('DELETE FROM books WHERE id = ?', [id]);
     return result.affectedRows;
   }
 };

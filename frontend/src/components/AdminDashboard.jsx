@@ -184,6 +184,50 @@ const AdminDashboard = () => {
     navigate('/admin/login');
   };
 
+  const handleDeleteBook = async (id) => {
+    try {
+      await api.delete(`/books/${id}`);
+      setBooks(books.filter(book => book.id !== id));
+      alert('Book deleted successfully');
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      alert('Failed to delete book');
+    }
+  };
+
+  const handleDeleteStationery = async (id) => {
+    try {
+      await api.delete(`/stationery/${id}`);
+      setStationeryItems(stationeryItems.filter(item => item.id !== id));
+      alert('Stationery item deleted successfully');
+    } catch (error) {
+      console.error('Error deleting stationery item:', error);
+      alert('Failed to delete stationery item');
+    }
+  };
+
+  const handleUpdateBookPrice = async (id, newPrice) => {
+    try {
+      await api.put(`/books/price/${id}`, { price: newPrice });
+      setBooks(books.map(book => (book.id === id ? { ...book, price: newPrice } : book)));
+      alert('Book price updated successfully');
+    } catch (error) {
+      console.error('Error updating book price:', error);
+      alert('Failed to update book price');
+    }
+  };
+
+  const handleUpdateStationeryPrice = async (id, newPrice) => {
+    try {
+      await api.put(`/stationery/price/${id}`, { price: newPrice });
+      setStationeryItems(stationeryItems.map(item => (item.id === id ? { ...item, price: newPrice } : item)));
+      alert('Stationery price updated successfully');
+    } catch (error) {
+      console.error('Error updating stationery price:', error);
+      alert('Failed to update stationery price');
+    }
+  };
+
   return (
     <Container className="mt-5">
       <Tab.Container defaultActiveKey="dashboard" onSelect={handleSelect}>
@@ -387,6 +431,7 @@ const AdminDashboard = () => {
                         <th>Stock</th>
                         <th>Category</th>
                         <th>Preorder</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -394,10 +439,21 @@ const AdminDashboard = () => {
                         <tr key={book.id}>
                           <td>{book.title}</td>
                           <td>{book.author}</td>
-                          <td>LKR {book.price}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              value={book.price}
+                              onChange={(e) => handleUpdateBookPrice(book.id, parseFloat(e.target.value))}
+                              className="form-control"
+                            />
+                          </td>
                           <td>{book.stock}</td>
                           <td>{categories.find(cat => cat.id === book.category_id)?.name}</td>
                           <td>{book.preorder ? 'Yes' : 'No'}</td>
+                          <td>
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteBook(book.id)}>Delete</Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -413,15 +469,27 @@ const AdminDashboard = () => {
                         <th>Price</th>
                         <th>Stock</th>
                         <th>Category</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {stationeryItems.map(item => (
                         <tr key={item.id}>
                           <td>{item.title}</td>
-                          <td>LKR {item.price}</td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              value={item.price}
+                              onChange={(e) => handleUpdateStationeryPrice(item.id, parseFloat(e.target.value))}
+                              className="form-control"
+                            />
+                          </td>
                           <td>{item.stock}</td>
                           <td>{stationeryCategories.find(cat => cat.id === item.category_id)?.name}</td>
+                          <td>
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteStationery(item.id)}>Delete</Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
