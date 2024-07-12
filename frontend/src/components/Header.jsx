@@ -47,7 +47,7 @@ const Header = ({ totalItems, searchTerm, setSearchTerm, currentPath }) => {
       <nav className="container mt-3">
         <ul className="nav nav-tabs">
           <li className="nav-item">
-            <Link className="nav-link" to="/bookstore">Book Store</Link>
+            <Link className="nav-link" to="/">Book Store</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/stationery">Stationery Store</Link>
