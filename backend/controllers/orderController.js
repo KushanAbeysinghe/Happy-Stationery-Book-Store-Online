@@ -16,6 +16,18 @@ const createOrder = async (req, res) => {
     const orderId = await Order.create(userId, total, name, address, email, phone, postalCode, province, district, area, paymentMethod);
 
     for (const item of items) {
+      // Verify that the item exists in the corresponding table
+      let itemExists;
+      if (item.type === 'book') {
+        itemExists = await Book.findById(item.id);
+      } else if (item.type === 'stationery') {
+        itemExists = await Stationery.findById(item.id);
+      }
+
+      if (!itemExists) {
+        throw new Error(`Item with ID ${item.id} of type ${item.type} does not exist`);
+      }
+
       // Add order item and update stock
       await Order.addOrderItem(orderId, item.id, item.quantity, item.type);
 
