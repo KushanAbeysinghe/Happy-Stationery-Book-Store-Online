@@ -11,10 +11,11 @@ import Stationery from './components/Stationery';
 import Stock from './components/Stock';
 import BookDetails from './components/BookDetails';
 import Header from './components/Header';
-import Footer from './components/Footer'; // Import Footer component
+import Footer from './components/Footer';
+import AdminLogin from './components/AdminLogin'; // Add this import
 import api from './api';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css'; // Import the CSS file
+import PrivateRoute from './routes/PrivateRoute';
 
 const App = () => {
   const [books, setBooks] = useState([]);
@@ -40,27 +41,25 @@ const App = () => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="app-container">
-      <Router>
-        <HeaderWrapper totalItems={totalItems} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <div className="content-wrap">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/cart" element={<Cart cart={cart} updateCart={updateCart} />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/bookstore" element={<BookStore books={books} searchTerm={searchTerm} updateCart={updateCart} />} />
-            <Route path="/checkout" element={<Checkout cart={cart} updateCart={updateCart} />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/stationery" element={<Stationery searchTerm={searchTerm} updateCart={updateCart} />} />
-            <Route path="/admin/stock" element={<Stock />} />
-            <Route path="/books/:id" element={<BookDetails books={books} updateCart={updateCart} />} />
-            <Route path="/" element={<BookStore books={books} searchTerm={searchTerm} updateCart={updateCart} />} />
-          </Routes>
-        </div>
-        <Footer /> {/* Add the Footer component here */}
-      </Router>
-    </div>
+    <Router>
+      <HeaderWrapper totalItems={totalItems} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<Cart cart={cart} updateCart={updateCart} />} />
+        <Route path="/bookstore" element={<BookStore books={books} searchTerm={searchTerm} updateCart={updateCart} />} />
+        <Route path="/checkout" element={<Checkout cart={cart} updateCart={updateCart} />} />
+        <Route path="/stationery" element={<Stationery searchTerm={searchTerm} updateCart={updateCart} />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/" element={<BookStore books={books} searchTerm={searchTerm} updateCart={updateCart} />} />
+        <Route path="/books/:id" element={<BookDetails books={books} updateCart={updateCart} />} />
+
+        <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+        <Route path="/admin/orders" element={<PrivateRoute><AdminOrders /></PrivateRoute>} />
+        <Route path="/admin/stock" element={<PrivateRoute><Stock /></PrivateRoute>} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 };
 

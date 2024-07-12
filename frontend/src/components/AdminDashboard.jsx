@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Nav, Tab, Container, Row, Col } from 'react-bootstrap';
+import { Nav, Tab, Container, Row, Col, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Import useAuth from AuthContext
 import api from '../api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,6 +29,7 @@ const AdminDashboard = () => {
   });
   const [stationeryItems, setStationeryItems] = useState([]);
   const navigate = useNavigate();
+  const { logout } = useAuth(); // Get logout function from useAuth
 
   useEffect(() => {
     const fetchData = async () => {
@@ -177,19 +179,27 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
+  };
+
   return (
     <Container className="mt-5">
       <Tab.Container defaultActiveKey="dashboard" onSelect={handleSelect}>
-        <Nav variant="pills" className="justify-content-center mb-4">
-          <Nav.Item>
-            <Nav.Link eventKey="dashboard">Dashboard</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey="orders">Orders</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey="stock">Stock</Nav.Link>
-          </Nav.Item>
+        <Nav variant="pills" className="justify-content-between mb-4">
+          <div className="d-flex">
+            <Nav.Item>
+              <Nav.Link eventKey="dashboard">Dashboard</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="orders">Orders</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="stock">Stock</Nav.Link>
+            </Nav.Item>
+          </div>
+          <Button variant="danger" onClick={handleLogout}>Logout</Button>
         </Nav>
         <Row>
           <Col>
