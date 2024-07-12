@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import emailjs from 'emailjs-com';
 import CheckoutPopup from './PaymentPopup'; // Import the new popup component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -89,6 +90,20 @@ const Checkout = ({ cart, updateCart }) => {
     }
   }, [area, areas]);
 
+  const sendEmail = async (templateId, variables) => {
+    try {
+      await emailjs.send(
+        'karate_vu442cq',
+        templateId,
+        variables,
+        'seUsDR706k_L0nSYR'
+      );
+      console.log('Email sent successfully');
+    } catch (error) {
+      console.error('Failed to send email:', error);
+    }
+  };
+
   const handlePlaceOrder = async () => {
     try {
       const order = {
@@ -118,6 +133,27 @@ const Checkout = ({ cart, updateCart }) => {
       if (paymentMethod === 'Bank Deposit') {
         const bankResponse = await api.get('/orders/bank-details');
         setBankDetails(bankResponse.data);
+
+        // Send email for Bank Deposit
+        sendEmail('bank_deposit_template', {
+          orderId,
+          total: (total + deliveryFee).toFixed(2),
+          bank_name: bankResponse.data.bank_name,
+          bank_branch: bankResponse.data.bank_branch,
+          account_name: bankResponse.data.account_name,
+          account_number: bankResponse.data.account_number,
+          whatsapp_number: bankResponse.data.whatsapp_number,
+          to_email: email,
+          items: cart.map(item => `${item.title} (${item.type}): LKR ${item.price} x ${item.quantity}`).join(', ')
+        });
+      } else {
+        // Send email for COD
+        sendEmail('cod_template', {
+          orderId,
+          total: (total + deliveryFee).toFixed(2),
+          to_email: email,
+          items: cart.map(item => `${item.title} (${item.type}): LKR ${item.price} x ${item.quantity}`).join(', ')
+        });
       }
 
       // Show the popup for all payment methods
@@ -278,7 +314,6 @@ const Checkout = ({ cart, updateCart }) => {
             <button type="button" className="btn btn-primary mt-3" onClick={handlePlaceOrder}>Place Order</button>
           </div>
         </div>
-        
       </div>
       <br></br><br></br>
       <br></br><br></br>
