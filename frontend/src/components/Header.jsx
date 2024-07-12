@@ -13,12 +13,11 @@ const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
 
   return (
     <div>
-      <header className="header bg-warning" style={styles.header}>
+      <header className="header" style={styles.header}>
         <div className="container d-flex align-items-center" style={styles.container}>
           <div className="logo d-flex align-items-center" style={styles.logo}>
             <img src={logo} alt="Happy Store" style={styles.logoImg} />
-            {/* <span style={styles.logoText}>Happy Store</span>
-            <span style={styles.logoSubtext}>Stationery and Books</span> */}
+          
           </div>
           <div className="search-bar d-flex align-items-center flex-grow-1 mx-3" style={styles.searchBar}>
             <FaHome style={styles.homeIcon} onClick={() => navigate('/')} />
@@ -59,6 +58,7 @@ const Header = ({ totalItems, searchTerm, setSearchTerm }) => {
 const styles = {
   header: {
     padding: '10px 0',
+    backgroundColor: '#FFDE59',
   },
   container: {
     display: 'flex',

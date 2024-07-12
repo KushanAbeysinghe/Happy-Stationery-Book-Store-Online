@@ -71,6 +71,7 @@
 
 .book-card {
   transition: transform 0.2s;
+  border-radius: 8px;
 }
 
 .book-card:hover {
