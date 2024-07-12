@@ -132,8 +132,8 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
                 onChange={handlePriceChange}
               />
               <div className="d-flex justify-content-between">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>LKR {priceRange[0]}</span>
+                <span>LKR {priceRange[1]}</span>
               </div>
             </div>
             <h3 className="mt-4">Filter by Author</h3>

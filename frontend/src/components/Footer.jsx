@@ -43,7 +43,8 @@ const Footer = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2024 Happy Store | All Rights Reserved | Digitally crafted by Inofinity Labs</p>
+        <p>&copy; 2024 Happy Store | All Rights Reserved | Concept, Design & Development By <a href="https://www.in4gen.com/" target="_blank" rel="noopener noreferrer">In4gen Solutions</a></p>
+
         </div>
       </div>
       <style>
