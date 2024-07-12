@@ -19,7 +19,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="login-container">
       <h2>Admin Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -46,6 +46,27 @@ const AdminLogin = () => {
         </div>
         <button type="submit" className="btn btn-primary mt-3">Login</button>
       </form>
+      <style>
+        {`
+          .login-container {
+            max-width: 400px;
+            padding: 20px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            text-align: center;
+          }
+
+          h2 {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+
+          
+        `}
+      </style>
     </div>
   );
 };
