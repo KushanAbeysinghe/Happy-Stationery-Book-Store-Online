@@ -3,6 +3,7 @@ import { Tab, Nav, Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import useAuth from AuthContext
 import api from '../api';
+import emailjs from 'emailjs-com';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminOrders = () => {
@@ -28,11 +29,36 @@ const AdminOrders = () => {
     fetchOrders();
   }, []);
 
+  const sendEmail = (order) => {
+    const emailParams = {
+      to_email: order.email,
+      order_id: order.id,
+      order_message: 'Your order has been handed over to delivery. You will receive it in 3 - 5 working days. Thank you.',
+    };
+
+    emailjs.send(
+      'karate_xi1rp8f',
+      'paymentkarate_8yntqmm',
+      emailParams,
+      'J77cRRgneb4aLosQN'
+    ).then((response) => {
+      console.log('Email sent successfully:', response.status, response.text);
+    }).catch((error) => {
+      console.error('Failed to send email:', error);
+    });
+  };
+
   const handleUpdateStatus = async (id, status) => {
     try {
       await api.put('/orders/status', { id, status });
       setOrders(orders.map(order => order.id === id ? { ...order, status } : order));
       alert(`Order ${status}`);
+
+      // Send email if the status is updated to "completed"
+      if (status === 'completed') {
+        const order = orders.find(order => order.id === id);
+        sendEmail(order);
+      }
     } catch (error) {
       console.error('Error updating order status:', error);
       alert('Failed to update order status');
