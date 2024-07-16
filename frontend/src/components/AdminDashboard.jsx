@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Nav, Tab, Container, Row, Col, Button } from 'react-bootstrap';
+import { Tab, Nav, Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
+import emailjs from 'emailjs-com';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminDashboard = () => {
@@ -29,6 +30,12 @@ const AdminDashboard = () => {
   });
   const [stationeryItems, setStationeryItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState({
+    category: false,
+    stationeryCategory: false,
+    book: false,
+    stationery: false
+  });
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
 
@@ -63,6 +70,7 @@ const AdminDashboard = () => {
 
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
+    setSubmitting({ ...submitting, category: true });
     try {
       await api.post('/categories', { name: newCategory });
       alert('Category added successfully');
@@ -71,6 +79,8 @@ const AdminDashboard = () => {
       setCategories(categoriesResponse.data);
     } catch (error) {
       console.error('Error adding category:', error);
+    } finally {
+      setSubmitting({ ...submitting, category: false });
     }
   };
 
@@ -80,6 +90,7 @@ const AdminDashboard = () => {
 
   const handleStationeryCategorySubmit = async (e) => {
     e.preventDefault();
+    setSubmitting({ ...submitting, stationeryCategory: true });
     try {
       await api.post('/stationery-categories', { name: newStationeryCategory });
       alert('Stationery category added successfully');
@@ -88,6 +99,8 @@ const AdminDashboard = () => {
       setStationeryCategories(stationeryCategoriesResponse.data);
     } catch (error) {
       console.error('Error adding stationery category:', error);
+    } finally {
+      setSubmitting({ ...submitting, stationeryCategory: false });
     }
   };
 
@@ -108,6 +121,7 @@ const AdminDashboard = () => {
 
   const handleBookSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting({ ...submitting, book: true });
     const formData = new FormData();
     formData.append('title', newBook.title);
     formData.append('author', newBook.author);
@@ -135,6 +149,8 @@ const AdminDashboard = () => {
       setBooks(booksResponse.data);
     } catch (error) {
       console.error('Error adding book:', error);
+    } finally {
+      setSubmitting({ ...submitting, book: false });
     }
   };
 
@@ -155,6 +171,7 @@ const AdminDashboard = () => {
 
   const handleStationerySubmit = async (e) => {
     e.preventDefault();
+    setSubmitting({ ...submitting, stationery: true });
     const formData = new FormData();
     formData.append('title', newStationery.title);
     formData.append('price', newStationery.price);
@@ -176,6 +193,8 @@ const AdminDashboard = () => {
       setStationeryItems(stationeryResponse.data);
     } catch (error) {
       console.error('Error adding stationery item:', error);
+    } finally {
+      setSubmitting({ ...submitting, stationery: false });
     }
   };
 
@@ -235,30 +254,30 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <style jsx>{`
-          .loading-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            padding-top: 20%;
-          }
-          .loading-spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #FFDE59;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.5s linear infinite;
-          }
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    );
+      <div className="loading-spinner"></div>
+      <style jsx>{`
+        .loading-container {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          height: 100vh;
+          padding-top: 20%;
+        }
+        .loading-spinner {
+          border: 8px solid #f3f3f3;
+          border-top: 8px solid #FFDE59;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
   }
 
   return (
@@ -299,7 +318,9 @@ const AdminDashboard = () => {
                           required
                         />
                       </div>
-                      <button className="btn btn-primary" type="submit">Add Category</button>
+                      <button className="btn btn-primary" type="submit">
+                        {submitting.category ? <Spinner animation="border" size="sm" /> : 'Add Category'}
+                      </button>
                     </form>
                   </div>
 
@@ -317,7 +338,9 @@ const AdminDashboard = () => {
                           required
                         />
                       </div>
-                      <button className="btn btn-primary" type="submit">Add Stationery Category</button>
+                      <button className="btn btn-primary" type="submit">
+                        {submitting.stationeryCategory ? <Spinner animation="border" size="sm" /> : 'Add Stationery Category'}
+                      </button>
                     </form>
                   </div>
                 </div>
@@ -389,7 +412,9 @@ const AdminDashboard = () => {
                       <div className="form-group">
                         <input type="file" name="images" onChange={handleFileChange} multiple required className="form-control-file" />
                       </div>
-                      <button className="btn btn-primary" type="submit">Add Book</button>
+                      <button className="btn btn-primary" type="submit">
+                        {submitting.book ? <Spinner animation="border" size="sm" /> : 'Add Book'}
+                      </button>
                     </form>
                   </div>
 
@@ -448,7 +473,9 @@ const AdminDashboard = () => {
                       <div className="form-group">
                         <input type="file" name="image" onChange={handleStationeryFileChange} required className="form-control-file" />
                       </div>
-                      <button className="btn btn-primary" type="submit">Add Stationery Item</button>
+                      <button className="btn btn-primary" type="submit">
+                        {submitting.stationery ? <Spinner animation="border" size="sm" /> : 'Add Stationery Item'}
+                      </button>
                     </form>
                   </div>
                 </div>
@@ -527,6 +554,7 @@ const AdminDashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                  <br></br>
                 </div>
               </Tab.Pane>
             </Tab.Content>
@@ -549,6 +577,31 @@ const AdminDashboard = () => {
           }
           .nav-pills .nav-link.active {
             background-color: #007bff;
+          }
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+          }
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #000;
+            width: 500px;
+            height: 60px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+          }
+
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+             100% { -webkit-transform: rotate(360deg); }
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}
       </style>
