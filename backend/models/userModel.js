@@ -1,19 +1,15 @@
 const db = require('../config/db');
 
 const User = {
-  create: async (username, email, password, isAdmin = false) => {
+  create: async (username, email, phone, address, postalCode, province, district, area) => {
     const [result] = await db.execute(
-      'INSERT INTO users (username, email, password, isAdmin) VALUES (?, ?, ?, ?)',
-      [username, email, password, isAdmin]
+      'INSERT INTO users (username, email, phone, address, postal_code, province, district, area) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [username, email, phone, address, postalCode, province, district, area]
     );
-    return result.insertId;
+    return { id: result.insertId, username, email, phone, address, postalCode, province, district, area };
   },
   findByEmail: async (email) => {
     const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-    return rows[0];
-  },
-  findById: async (id) => {
-    const [rows] = await db.execute('SELECT * FROM users WHERE id = ?', [id]);
     return rows[0];
   }
 };

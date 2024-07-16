@@ -1,19 +1,26 @@
 const Order = require('../models/orderModel'); // Ensure this import is present
 const Book = require('../models/bookModel');
 const Stationery = require('../models/stationeryModel');
+const User = require('../models/userModel'); // Add this line
 const db = require('../config/db');
 
 const createOrder = async (req, res) => {
-  const { userId, total, name, address, email, phone, postalCode, province, district, area, items, paymentMethod } = req.body;
+  const { total, name, address, email, phone, postalCode, province, district, area, items, paymentMethod } = req.body;
 
   try {
     // Check if any required field is missing
-    if (!userId || !total || !name || !address || !email || !phone || !postalCode || !province || !district || !area || !items || !paymentMethod) {
+    if (!total || !name || !address || !email || !phone || !postalCode || !province || !district || !area || !items || !paymentMethod) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Create or get the user
+    let user = await User.findByEmail(email);
+    if (!user) {
+      user = await User.create(name, email, phone, address, postalCode, province, district, area);
+    }
+
     // Create the order
-    const orderId = await Order.create(userId, total, name, address, email, phone, postalCode, province, district, area, paymentMethod);
+    const orderId = await Order.create(user.id, total, user.username, address, email, phone, postalCode, province, district, area, paymentMethod);
 
     for (const item of items) {
       // Verify that the item exists in the corresponding table

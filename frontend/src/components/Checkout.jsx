@@ -6,16 +6,15 @@ import CheckoutPopup from './PaymentPopup'; // Import the new popup component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Checkout = ({ cart, updateCart }) => {
-  const user = JSON.parse(localStorage.getItem('user')) || {};
   const [total, setTotal] = useState(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
-  const [name, setName] = useState(user.name || '');
-  const [address, setAddress] = useState(user.address || '');
-  const [email, setEmail] = useState(user.email || '');
-  const [phone, setPhone] = useState(user.phone || '');
-  const [postalCode, setPostalCode] = useState(user.postalCode || '');
-  const [province, setProvince] = useState(user.province || '');
-  const [district, setDistrict] = useState(user.district || '');
-  const [area, setArea] = useState(user.area || '');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [province, setProvince] = useState('');
+  const [district, setDistrict] = useState('');
+  const [area, setArea] = useState('');
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -107,7 +106,6 @@ const Checkout = ({ cart, updateCart }) => {
   const handlePlaceOrder = async () => {
     try {
       const order = {
-        userId: user.id,
         total: total + deliveryFee,
         name,
         address,
