@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import QuantityPopup from './QuantityPopup';
 import { GlassMagnifier } from 'react-image-magnifiers';
@@ -6,12 +6,78 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BookDetails = ({ books, updateCart }) => {
   const { id } = useParams();
-  const book = books.find(book => book.id.toString() === id);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [book, setBook] = useState(null);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      const selectedBook = books.find(book => book.id.toString() === id);
+      if (selectedBook) {
+        setBook(selectedBook);
+      }
+      setLoading(false);
+    };
+    fetchBook();
+  }, [id, books]);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <style jsx>{`
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 20%;
+          }
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #FFDE59;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   if (!book) {
-    return <div>Book not found</div>;
+    return(
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <style jsx>{`
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 20%;
+          }
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #FFDE59;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   const handleImageClick = (index) => {

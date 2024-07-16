@@ -9,6 +9,7 @@ const Stock = () => {
   const [books, setBooks] = useState([]);
   const [stationery, setStationery] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { logout } = useAuth(); // Get logout function from useAuth
 
@@ -19,8 +20,10 @@ const Stock = () => {
         const stationeryResponse = await api.get('/stationery');
         setBooks(booksResponse.data);
         setStationery(stationeryResponse.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching stock:', error);
+        setLoading(false);
       }
     };
     fetchStock();
@@ -73,6 +76,35 @@ const Stock = () => {
     logout();
     navigate('/admin');
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <style jsx>{`
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 20%;
+          }
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #FFDE59;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <Container className="mt-5">

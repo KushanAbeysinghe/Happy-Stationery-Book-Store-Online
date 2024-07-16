@@ -43,43 +43,44 @@ const Footer = () => {
           </div>
         </div>
         <div className="footer-bottom">
-        <p>&copy; 2024 Happy Store | All Rights Reserved | Concept, Design & Development By <a href="https://www.in4gen.com/" target="_blank" rel="noopener noreferrer">In4gen Solutions</a></p>
-
+          <p>&copy; 2024 Happy Store | All Rights Reserved | Concept, Design & Development By <a href="https://www.in4gen.com/" target="_blank" rel="noopener noreferrer">In4gen Solutions</a></p>
         </div>
       </div>
       <style>
         {`
           .footer {
-            background-color: #000;
-            color: #fff;
-            padding: 40px 0;
+            background-color: #FFDE59;
+            color: #000;
+            padding: 30px 0;
           }
           .footer .logo img {
-            max-width: 150px;
+            max-width: 200px;
           }
           .footer h5 {
-            color: #FFDE59;
+            color: #000;
             font-weight: bold;
             margin-bottom: 20px;
           }
           .footer a {
-            color: #fff;
+            color: #000;
             text-decoration: none;
           }
           .footer a:hover {
-            color: #FFDE59;
+            color: #fff;
           }
           .footer .social-icons a {
-            color: #fff;
+            color: #000;
             margin-right: 10px;
           }
           .footer .social-icons a:hover {
-            color: #FFDE59;
+            color: #fff;
           }
           .footer .footer-bottom {
+           
+            color: black;
             border-top: 1px solid #333;
             padding-top: 10px;
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: center;
           }
         `}
