@@ -71,7 +71,7 @@ const Stock = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate('/admin');
   };
 
   return (

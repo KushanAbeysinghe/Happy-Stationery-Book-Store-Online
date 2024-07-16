@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Nav, Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import useAuth from AuthContext
+import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import emailjs from 'emailjs-com';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,9 +11,14 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Get logout function from useAuth
+  const { logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/admin');
+      return;
+    }
+
     const fetchOrders = async () => {
       try {
         const response = await api.get('/orders');
@@ -27,7 +32,7 @@ const AdminOrders = () => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   const sendEmail = (order) => {
     const emailParams = {
@@ -54,7 +59,6 @@ const AdminOrders = () => {
       setOrders(orders.map(order => order.id === id ? { ...order, status } : order));
       alert(`Order ${status}`);
 
-      // Send email if the status is updated to "completed"
       if (status === 'completed') {
         const order = orders.find(order => order.id === id);
         sendEmail(order);
