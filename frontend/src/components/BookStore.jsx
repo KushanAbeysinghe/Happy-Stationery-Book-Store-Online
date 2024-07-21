@@ -4,7 +4,7 @@ import Book from './Book';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { FaFilter, FaTimes } from 'react-icons/fa'; // Add filter and close icons
+import { FaFilter, FaTimes } from 'react-icons/fa';
 
 const BookStore = ({ books = [], searchTerm, updateCart }) => {
   const [categories, setCategories] = useState([]);
@@ -17,6 +17,8 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
   const [inStock, setInStock] = useState(true);
   const [outOfStock, setOutOfStock] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +48,17 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
     return matchesTitle && matchesCategory && matchesAuthor && matchesPrice && matchesStock;
   });
 
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+
   const handlePriceChange = (value) => {
     setPriceRange(value);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const addToCart = (item, quantity) => {
@@ -60,6 +71,28 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCart(cart);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <li
+          key={i}
+          className={`page-item ${i === currentPage ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          <a className="page-link" href="#">{i}</a>
+        </li>
+      );
+    }
+    return (
+      <nav>
+        <ul className="pagination justify-content-center">
+          {pages}
+        </ul>
+      </nav>
+    );
   };
 
   if (loading) {
@@ -173,10 +206,11 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
           </div>
         </div>
         <div className="col-md-9">
+          {/* {renderPagination()} */}
           <div className="row">
-            {filteredBooks.length > 0 ? (
-              filteredBooks.map(book => (
-                <div className="col-6 col-md-4 mb-4" key={book.id}> {/* Update class to show 2 items per row on small screens */}
+            {currentBooks.length > 0 ? (
+              currentBooks.map(book => (
+                <div className="col-6 col-md-4 mb-4" key={book.id}>
                   <Book book={book} onAddToCart={addToCart} />
                 </div>
               ))
@@ -184,6 +218,7 @@ const BookStore = ({ books = [], searchTerm, updateCart }) => {
               <div className="col-12">No books available</div>
             )}
           </div>
+          {renderPagination()}
         </div>
       </div>
       <br></br><br></br>
