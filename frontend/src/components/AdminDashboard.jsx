@@ -3,7 +3,6 @@ import { Tab, Nav, Container, Row, Col, Card, Button, Spinner } from 'react-boot
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import emailjs from 'emailjs-com';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminDashboard = () => {
@@ -43,6 +42,8 @@ const AdminDashboard = () => {
     book: false,
     stationery: false
   });
+  const [updatedBookPrices, setUpdatedBookPrices] = useState({});
+  const [updatedStationeryPrices, setUpdatedStationeryPrices] = useState({});
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
 
@@ -254,7 +255,22 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUpdateBookPrice = async (id, newPrice) => {
+  const handleUpdateBookPrice = (id, newPrice) => {
+    setUpdatedBookPrices({
+      ...updatedBookPrices,
+      [id]: newPrice
+    });
+  };
+
+  const handleUpdateStationeryPrice = (id, newPrice) => {
+    setUpdatedStationeryPrices({
+      ...updatedStationeryPrices,
+      [id]: newPrice
+    });
+  };
+
+  const updateBookPrice = async (id) => {
+    const newPrice = updatedBookPrices[id];
     try {
       await api.put(`/books/price/${id}`, { price: newPrice });
       setBooks(books.map(book => (book.id === id ? { ...book, price: newPrice } : book)));
@@ -264,7 +280,8 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUpdateStationeryPrice = async (id, newPrice) => {
+  const updateStationeryPrice = async (id) => {
+    const newPrice = updatedStationeryPrices[id];
     try {
       await api.put(`/stationery/price/${id}`, { price: newPrice });
       setStationeryItems(stationeryItems.map(item => (item.id === id ? { ...item, price: newPrice } : item)));
@@ -588,6 +605,7 @@ const AdminDashboard = () => {
                   <table className="table table-striped table-bordered">
                     <thead>
                       <tr>
+                      <th>ISBN-13</th>
                         <th>Title</th>
                         <th>Author</th>
                         <th>Price</th>
@@ -600,13 +618,14 @@ const AdminDashboard = () => {
                     <tbody>
                       {books.map(book => (
                         <tr key={book.id}>
+                           <td>{book.isbn13}</td>
                           <td>{book.title}</td>
                           <td>{book.author}</td>
                           <td>
                             <input
                               type="number"
                               min="0"
-                              value={book.price}
+                              value={updatedBookPrices[book.id] !== undefined ? updatedBookPrices[book.id] : book.price}
                               onChange={(e) => handleUpdateBookPrice(book.id, parseFloat(e.target.value))}
                               className="form-control"
                             />
@@ -615,6 +634,7 @@ const AdminDashboard = () => {
                           <td>{categories.find(cat => cat.id === book.category_id)?.name}</td>
                           <td>{book.preorder ? 'Yes' : 'No'}</td>
                           <td>
+                            <Button variant="success" size="sm" onClick={() => updateBookPrice(book.id)}>Update</Button>{' '}
                             <Button variant="danger" size="sm" onClick={() => handleDeleteBook(book.id)}>Delete</Button>
                           </td>
                         </tr>
@@ -643,7 +663,7 @@ const AdminDashboard = () => {
                             <input
                               type="number"
                               min="0"
-                              value={item.price}
+                              value={updatedStationeryPrices[item.id] !== undefined ? updatedStationeryPrices[item.id] : item.price}
                               onChange={(e) => handleUpdateStationeryPrice(item.id, parseFloat(e.target.value))}
                               className="form-control"
                             />
@@ -651,6 +671,7 @@ const AdminDashboard = () => {
                           <td>{item.stock}</td>
                           <td>{stationeryCategories.find(cat => cat.id === item.category_id)?.name}</td>
                           <td>
+                            <Button variant="success" size="sm" onClick={() => updateStationeryPrice(item.id)}>Update</Button>{' '}
                             <Button variant="danger" size="sm" onClick={() => handleDeleteStationery(item.id)}>Delete</Button>
                           </td>
                         </tr>
