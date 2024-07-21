@@ -1,16 +1,12 @@
 // const db = require('../config/db');
 
 // const Order = {
-//   create: async (userId, total, name, address, email, phone,postalCode, province, district, area, paymentMethod) => {
+//   create: async (userId, total, name, address, email, phone, postalCode, province, district, area, paymentMethod) => {
 //     const [result] = await db.execute(
-//       'INSERT INTO orders (user_id, total, name, address, email, phone,postal_code, province, district, area, payment_method, status, order_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", NOW())',
+//       'INSERT INTO orders (user_id, total, name, address, email, phone, postal_code, province, district, area, payment_method, status, order_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", NOW())',
 //       [userId, total, name, address, email, phone, postalCode, province, district, area, paymentMethod]
 //     );
 //     return result.insertId;
-//   },
-//   findAll: async () => {
-//     const [rows] = await db.execute('SELECT * FROM orders');
-//     return rows;
 //   },
 //   findAllWithDetails: async () => {
 //     const [orders] = await db.execute(`
@@ -60,11 +56,9 @@
 //       params = [orderId, itemId, quantity];
 //     }
 
-//     // Logging to debug
 //     console.log("Adding order item with query:", query);
 //     console.log("Parameters:", params);
 
-//     // Ensure none of the params are undefined
 //     if (params.includes(undefined)) {
 //       throw new Error('Parameters must not contain undefined. Check the values being passed.');
 //     }
@@ -79,7 +73,6 @@
 // };
 
 // module.exports = Order;
-
 
 const db = require('../config/db');
 
@@ -109,7 +102,8 @@ const Order = {
           CASE 
             WHEN order_items.book_id IS NOT NULL THEN books.price 
             WHEN order_items.stationery_id IS NOT NULL THEN stationery.price 
-          END AS price
+          END AS price,
+          books.isbn13
         FROM order_items
         LEFT JOIN books ON order_items.book_id = books.id
         LEFT JOIN stationery ON order_items.stationery_id = stationery.id
