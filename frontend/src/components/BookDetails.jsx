@@ -30,7 +30,7 @@ const BookDetails = ({ books, updateCart }) => {
           .loading-container {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             height: 100vh;
             padding-top: 20%;
           }
@@ -52,14 +52,14 @@ const BookDetails = ({ books, updateCart }) => {
   }
 
   if (!book) {
-    return(
+    return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
         <style jsx>{`
           .loading-container {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             height: 100vh;
             padding-top: 20%;
           }
@@ -97,8 +97,11 @@ const BookDetails = ({ books, updateCart }) => {
   };
 
   return (
-    <div className="container book-details mt-5">  {/* Added mt-5 for margin-top */}
+    <div className="container book-details mt-5">
       <div className="row">
+        <div className="col-md-12 text-center mb-4">
+          <h2 className="book-title">{book.title}</h2>
+        </div>
         <div className="col-md-6">
           <GlassMagnifier
             imageSrc={book.images[selectedImage]}
@@ -109,9 +112,9 @@ const BookDetails = ({ books, updateCart }) => {
             magnifierOffsetX={0}
             magnifierOffsetY={0}
             magnifierZoom={2}
-            style={{ width: '100%' }}
+            style={{ width: '100%', borderRadius: '8px' }}
           />
-          <div className="image-thumbnails mt-2">
+          <div className="image-thumbnails mt-3 d-flex justify-content-center">
             {book.images.map((image, index) => (
               <img
                 key={index}
@@ -125,24 +128,45 @@ const BookDetails = ({ books, updateCart }) => {
           </div>
         </div>
         <div className="col-md-6">
-          <h2>{book.title}</h2>
-          <p><strong>Author:</strong> {book.author}</p>
-          <p><strong>Price:</strong> LKR {book.price}</p>
-          <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-          {book.stock === 0 && book.preorder && (
-            <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
-          )}
-          <button
-            className="btn btn-primary mr-2"
-            onClick={() => setIsPopupOpen(true)}
-            disabled={book.stock === 0}
-            style={{ cursor: book.stock === 0 ? 'not-allowed' : 'pointer' }}
-          >
-            Add to Cart
-          </button>
+          <div className="book-info">
+            <p><strong>Author:</strong> {book.author}</p>
+            <p><strong>Price:</strong> LKR {book.price}</p>
+            <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
+            {book.stock === 0 && book.preorder && (
+              <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
+            )}
+            <button
+              className="btn btn-primary mr-2"
+              onClick={() => setIsPopupOpen(true)}
+              disabled={book.stock === 0}
+              style={{ cursor: book.stock === 0 ? 'not-allowed' : 'pointer' }}
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
-      <br></br><br></br>
+      <div className="row mt-5">
+        <div className="col-md-12">
+          <div className="book-specifications">
+            <h4 className="specifications-header">Product Specifications</h4>
+            <p><strong>Book Description:</strong> {book.description || 'No description available for this product.'}</p>
+            <h5 className="specifications-header">Book Specifications</h5>
+            <div className="row">
+              <div className="col-md-6">
+                <p><strong>ISBN-13:</strong> {book.isbn13}</p>
+                <p><strong>Language:</strong> {book.language}</p>
+                <p><strong>Binding:</strong> {book.binding}</p>
+                <p><strong>Publisher:</strong> {book.publisher}</p>
+              </div>
+              <div className="col-md-6">
+                <p><strong>Publishing Date:</strong> {book.publishingDate}</p>
+                <p><strong>Product Edition:</strong> {book.productEdition}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <br></br><br></br>
 
       {isPopupOpen && (
@@ -154,51 +178,58 @@ const BookDetails = ({ books, updateCart }) => {
       )}
       <style>
         {`
-          .book-details .image-thumbnails img {
-            margin-right: 5px;
-            width: 50px;
+          .book-title {
+            font-size: 2rem;
+            font-weight: bold;
+          }
+          .book-info p {
+            font-size: 1.1rem;
+            margin: 5px 0;
+          }
+          .book-specifications {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+          .specifications-header {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #343a40;
+          }
+          .image-thumbnails img {
+            margin: 5px;
+            width: 70px;
             height: auto;
             cursor: pointer;
             border: 1px solid transparent;
+            border-radius: 5px;
           }
 
-          .book-details .image-thumbnails img.selected {
-            border: 1px solid #007bff;
+          .image-thumbnails img.selected {
+            border: 2px solid #007bff;
           }
 
-          .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+          .loading-container {
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
           }
 
-          .popup-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 400px;
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #FFDE59;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
           }
 
-          .popup-content input {
-            width: 50px;
-            margin-top: 10px;
-          }
-
-          .popup-content button {
-            margin-top: 10px;
-          }
-
-          .book-details .btn-outline-secondary {
-            margin-right: 10px;
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}
       </style>
@@ -208,11 +239,12 @@ const BookDetails = ({ books, updateCart }) => {
 
 const styles = {
   thumbnail: {
-    marginRight: '5px',
-    width: '50px',
+    margin: '5px',
+    width: '70px',
     height: 'auto',
     cursor: 'pointer',
     border: '1px solid transparent',
+    borderRadius: '5px',
   },
 };
 

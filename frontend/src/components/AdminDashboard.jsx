@@ -19,7 +19,14 @@ const AdminDashboard = () => {
     stock: '',
     categoryId: '',
     images: [],
-    preorder: false
+    preorder: false,
+    isbn13: '',
+    language: '',
+    binding: '',
+    publisher: '',
+    publishingDate: '',
+    productEdition: '',
+    description: ''
   });
   const [newStationery, setNewStationery] = useState({
     title: '',
@@ -38,6 +45,8 @@ const AdminDashboard = () => {
   });
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+
+  const languages = ['Sinhala', 'English', 'Tamil', 'Hindi'];
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -132,6 +141,13 @@ const AdminDashboard = () => {
       formData.append('images', image);
     });
     formData.append('preorder', newBook.preorder);
+    formData.append('isbn13', newBook.isbn13);
+    formData.append('language', newBook.language);
+    formData.append('binding', newBook.binding);
+    formData.append('publisher', newBook.publisher);
+    formData.append('publishingDate', newBook.publishingDate);
+    formData.append('productEdition', newBook.productEdition);
+    formData.append('description', newBook.description || 'No Description Available for this product');
 
     try {
       await api.post('/books', formData);
@@ -143,7 +159,14 @@ const AdminDashboard = () => {
         stock: '',
         categoryId: '',
         images: [],
-        preorder: false
+        preorder: false,
+        isbn13: '',
+        language: '',
+        binding: '',
+        publisher: '',
+        publishingDate: '',
+        productEdition: '',
+        description: ''
       });
       const booksResponse = await api.get('/books');
       setBooks(booksResponse.data);
@@ -254,30 +277,30 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="loading-container">
-      <div className="loading-spinner"></div>
-      <style jsx>{`
-        .loading-container {
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          height: 100vh;
-          padding-top: 20%;
-        }
-        .loading-spinner {
-          border: 8px solid #f3f3f3;
-          border-top: 8px solid #FFDE59;
-          border-radius: 50%;
-          width: 60px;
-          height: 60px;
-          animation: spin 1.5s linear infinite;
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
-  );
+        <div className="loading-spinner"></div>
+        <style jsx>{`
+          .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            padding-top: 20%;
+          }
+          .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #FFDE59;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
@@ -408,6 +431,86 @@ const AdminDashboard = () => {
                             </option>
                           ))}
                         </select>
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="isbn13"
+                          className="form-control"
+                          placeholder="ISBN13"
+                          value={newBook.isbn13}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <select
+                          name="language"
+                          className="form-control"
+                          value={newBook.language}
+                          onChange={handleInputChange}
+                          required
+                        >
+                          <option value="">Select Language</option>
+                          {languages.map(language => (
+                            <option key={language} value={language}>
+                              {language}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="binding"
+                          className="form-control"
+                          placeholder="Binding"
+                          value={newBook.binding}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="publisher"
+                          className="form-control"
+                          placeholder="Publisher"
+                          value={newBook.publisher}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="date"
+                          name="publishingDate"
+                          className="form-control"
+                          placeholder="Publishing Date"
+                          value={newBook.publishingDate}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          name="productEdition"
+                          className="form-control"
+                          placeholder="Product Edition"
+                          value={newBook.productEdition}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <textarea
+                          name="description"
+                          className="form-control"
+                          placeholder="Description"
+                          value={newBook.description}
+                          onChange={handleInputChange}
+                        />
                       </div>
                       <div className="form-group">
                         <input type="file" name="images" onChange={handleFileChange} multiple required className="form-control-file" />

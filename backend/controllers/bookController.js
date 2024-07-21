@@ -16,9 +16,40 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const createBook = async (req, res) => {
-  const { title, author, price, stock, categoryId, preorder, preorderDate, preorderedStock } = req.body;
+  const {
+    title,
+    author,
+    price,
+    stock,
+    categoryId,
+    preorder,
+    preorderDate,
+    preorderedStock,
+    isbn13,
+    language,
+    binding,
+    publisher,
+    publishingDate,
+    productEdition,
+    description
+  } = req.body;
   const images = req.files.map(file => file.filename);
-  const bookId = await Book.create(title, author, price, stock, categoryId, images, preorder, preorderDate, preorderedStock);
+  const bookId = await Book.create(title,
+    author,
+    price,
+    stock,
+    categoryId,
+    images,
+    preorder,
+    preorderDate,
+    preorderedStock,
+    isbn13,
+    language,
+    binding,
+    publisher,
+    publishingDate,
+    productEdition,
+    description || 'No Description Available for this product');
   res.status(201).json({ bookId });
 };
 

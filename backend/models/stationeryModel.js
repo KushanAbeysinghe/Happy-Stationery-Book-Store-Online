@@ -21,7 +21,7 @@ const Stationery = {
       stock: row.stock,
       category_id: row.category_id,
       category_name: row.category_name,
-      image: row.image ? `https://karateonline.lk/uploads/${row.image}` : null
+      image: row.image ? `http://localhost:5000/uploads/${row.image}` : null
     }));
   },
   findById: async (id) => {
