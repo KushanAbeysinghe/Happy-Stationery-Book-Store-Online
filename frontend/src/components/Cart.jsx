@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Footer from './Footer'; // Make sure to import your Footer component
 
 const Cart = ({ cart, updateCart }) => {
   const navigate = useNavigate();
+  const [stockWarning, setStockWarning] = useState({});
 
   const removeItem = (id) => {
     const updatedCart = cart.filter(item => item.id !== id);
@@ -36,6 +37,24 @@ const Cart = ({ cart, updateCart }) => {
   };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleCheckout = () => {
+    let isValid = true;
+    const warning = {};
+
+    cart.forEach(item => {
+      if (item.quantity > item.stock) {
+        warning[item.id] = `Only ${item.stock} in stock`;
+        isValid = false;
+      }
+    });
+
+    setStockWarning(warning);
+
+    if (isValid) {
+      navigate('/checkout');
+    }
+  };
 
   return (
     <div className="wrapper">
@@ -70,6 +89,9 @@ const Cart = ({ cart, updateCart }) => {
                         </div>
                         <button style={styles.removeButton} className="btn btn-danger btn-sm" onClick={() => removeItem(item.id)}>Remove</button>
                         <span style={styles.itemPrice}> LKR {item.price}</span>
+                        {stockWarning[item.id] && (
+                          <span style={styles.stockWarning}> ({stockWarning[item.id]})</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -79,16 +101,15 @@ const Cart = ({ cart, updateCart }) => {
                 <div style={styles.totalText} className="text-left">
                   <h5>Subtotal: LKR {total.toFixed(2)}</h5>
                   <h5>Total: LKR {total.toFixed(2)}</h5>
-                  <button style={styles.checkoutButton} className="btn btn-primary mt-3" onClick={() => navigate('/checkout')}>Checkout</button>
+                  <button style={styles.checkoutButton} className="btn btn-primary mt-3" onClick={handleCheckout}>Checkout</button>
                 </div>
-                
               </div>
-              <br></br> <br></br> <br></br> <br></br><br></br><br></br><br></br>
+              <br /><br /><br /><br /><br /><br /><br />
             </>
           ) : (
             <div>
-            <p>Your cart is empty</p>
-            <br></br> <br></br> <br></br> <br></br><br></br> <br></br> <br></br> <br></br><br></br> <br></br> <br></br> <br></br>
+              <p>Your cart is empty</p>
+              <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
             </div>
           )}
           <style jsx>{`
@@ -113,7 +134,6 @@ const Cart = ({ cart, updateCart }) => {
           `}</style>
         </div>
       </div>
-    
     </div>
   );
 };
@@ -172,6 +192,10 @@ const styles = {
     cursor: 'pointer'
   },
   itemPrice: {
+    marginLeft: '10px'
+  },
+  stockWarning: {
+    color: 'red',
     marginLeft: '10px'
   },
   totalContainer: {

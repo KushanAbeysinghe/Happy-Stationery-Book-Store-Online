@@ -5,7 +5,7 @@ import QuantityPopup from './QuantityPopup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { FaFilter, FaTimes } from 'react-icons/fa'; // Add filter and close icons
+import { FaFilter, FaTimes } from 'react-icons/fa';
 
 const Stationery = ({ searchTerm, updateCart }) => {
   const [stationeryItems, setStationeryItems] = useState([]);
@@ -18,12 +18,16 @@ const Stationery = ({ searchTerm, updateCart }) => {
   const [inStock, setInStock] = useState(true);
   const [outOfStock, setOutOfStock] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const stationeryResponse = await api.get('/stationery');
-        const categoriesResponse = await api.get('/stationery-categories');
+        const [stationeryResponse, categoriesResponse] = await Promise.all([
+          api.get('/stationery'),
+          api.get('/stationery-categories'),
+        ]);
         setStationeryItems(stationeryResponse.data);
         setCategories(categoriesResponse.data);
         setLoading(false);
@@ -44,6 +48,11 @@ const Stationery = ({ searchTerm, updateCart }) => {
     return matchesTitle && matchesCategory && matchesPrice && matchesStock;
   });
 
+  const totalPages = Math.ceil(filteredStationery.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredStationery.slice(indexOfFirstItem, indexOfLastItem);
+
   const handleAddToCart = (item) => {
     setSelectedItem(item);
   };
@@ -62,11 +71,44 @@ const Stationery = ({ searchTerm, updateCart }) => {
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCart(cart);
-    setSelectedItem(null); // Close the popup after adding to cart
+    setSelectedItem(null);
   };
 
   const handlePriceChange = (value) => {
     setPriceRange(value);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <li
+          key={i}
+          className={`page-item ${i === currentPage ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+          style={{
+            cursor: 'pointer',
+            color: i === currentPage ? 'white' : 'black',
+            margin: '0 5px',
+            borderRadius: '5px',
+            padding: '5px 10px'
+          }}
+        >
+          <a className="page-link" href="#" style={{ color: 'inherit', textDecoration: 'none' }}>{i}</a>
+        </li>
+      );
+    }
+    return (
+      <nav style={{ position: 'relative', zIndex: 1 }}>
+        <ul className="pagination justify-content-center">
+          {pages}
+        </ul>
+      </nav>
+    );
   };
 
   if (loading) {
@@ -171,11 +213,10 @@ const Stationery = ({ searchTerm, updateCart }) => {
           </div>
         </div>
         <div className="col-md-9">
-          {/* <h3>Stationery Items</h3> */}
           <div className="row">
-            {filteredStationery.length > 0 ? (
-              filteredStationery.map(item => (
-                <div className="col-6 col-md-4 mb-4" key={item.id}> {/* Update class to show 2 items per row on small screens */}
+            {currentItems.length > 0 ? (
+              currentItems.map(item => (
+                <div className="col-6 col-md-4 mb-4" key={item.id}>
                   <StationeryItem item={item} onAddToCart={handleAddToCart} />
                 </div>
               ))
@@ -183,16 +224,17 @@ const Stationery = ({ searchTerm, updateCart }) => {
               <div className="col-12">No stationery items available</div>
             )}
           </div>
+          {renderPagination()}
         </div>
       </div>
-      <br></br><br></br>
-
       {selectedItem && (
-        <QuantityPopup
-          item={selectedItem}
-          onClose={handleClosePopup}
-          onAddToCart={addToCart}
-        />
+        <div className="popup">
+          <QuantityPopup
+            item={selectedItem}
+            onClose={handleClosePopup}
+            onAddToCart={addToCart}
+          />
+        </div>
       )}
       <style jsx>{`
         .filters {
@@ -238,6 +280,14 @@ const Stationery = ({ searchTerm, updateCart }) => {
             flex: 0 0 50%;
             max-width: 50%;
           }
+        }
+        .pagination {
+          z-index: 1; /* Ensure the pagination is behind the popup */
+        }
+        .popup {
+          z-index: 10; /* Ensure the popup is above the pagination */
+          position: fixed;
+         
         }
       `}</style>
     </div>
