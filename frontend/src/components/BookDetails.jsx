@@ -96,11 +96,16 @@ const BookDetails = ({ books, updateCart }) => {
     updateCart(cart);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-CA'); // Formats the date as YYYY-MM-DD
+  };
+
   return (
     <div className="container book-details mt-5">
       <div className="row">
         <div className="col-md-12 text-center mb-4">
-          <h2 className="book-title">{book.title}</h2>
+          {/* <h2 className="book-title">{book.title}</h2> */}
         </div>
         <div className="col-md-6">
           <GlassMagnifier
@@ -129,8 +134,9 @@ const BookDetails = ({ books, updateCart }) => {
         </div>
         <div className="col-md-6">
           <div className="book-info">
-            <p><strong>Author:</strong> {book.author}</p>
-            <p><strong>Price:</strong> LKR {book.price}</p>
+          <h2 className="book-title">{book.title}</h2>
+            <p><strong>Author:</strong> {book.author}</p><br></br>
+            <h4><strong>Price:</strong> LKR {book.price}</h4>
             <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
             {book.stock === 0 && book.preorder && (
               <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
@@ -160,8 +166,8 @@ const BookDetails = ({ books, updateCart }) => {
                 <p><strong>Publisher:</strong> {book.publisher}</p>
               </div>
               <div className="col-md-6">
-                <p><strong>Publishing Date:</strong> {book.publishingDate}</p>
-                <p><strong>Product Edition:</strong> {book.productEdition}</p>
+                <p><strong>Publishing Date:</strong> {formatDate(book.publishing_date)}</p>
+                <p><strong>Product Edition:</strong> {book.product_edition}</p>
               </div>
             </div>
           </div>
