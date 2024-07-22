@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import QuantityPopup from './QuantityPopup';
 import { GlassMagnifier } from 'react-image-magnifiers';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -102,7 +103,13 @@ const BookDetails = ({ books, updateCart }) => {
 
   return (
     <div className="container book-details mt-5">
-      <div className="row">
+      <Helmet>
+        <meta property="og:title" content={book.title} />
+        <meta property="og:description" content={book.description} />
+        <meta property="og:image" content={book.images[selectedImage]} />
+        <meta property="og:url" content={`https://karateonline.lk/books/${id}`} />
+      </Helmet>
+      <div className="row book-details-container">
         <div className="col-md-5 d-flex flex-column align-items-center">
           <div className="image-container mb-3">
             <GlassMagnifier
@@ -138,19 +145,21 @@ const BookDetails = ({ books, updateCart }) => {
             {book.stock === 0 && book.preorder && (
               <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
             )}
-            <button
-              className="btn btn-primary mr-2"
-              onClick={() => setIsPopupOpen(true)}
-              disabled={book.stock === 0}
-              style={{ cursor: book.stock === 0 ? 'not-allowed' : 'pointer' }}
-            >
-              Add to Cart
-            </button>
-            <div className="icons mt-3">
-              <FaShoppingCart className="icon" title="Shopping Cart" />
-              <FaTruck className="icon" title="Fast Delivery" />
-              <FaLock className="icon" title="Secure" />
-              <FaHeadset className="icon" title="24/7 Customer Support" />
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
+              <div className="icons mb-3 mb-md-0">
+                <FaShoppingCart className="icon" title="Shopping Cart" />
+                <FaTruck className="icon" title="Fast Delivery" />
+                <FaLock className="icon" title="Secure" />
+                <FaHeadset className="icon" title="24/7 Customer Support" />
+              </div>
+              <button
+                className="btn btn-primary"
+                onClick={() => setIsPopupOpen(true)}
+                disabled={book.stock === 0}
+                style={{ cursor: book.stock === 0 ? 'not-allowed' : 'pointer' }}
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
           <div className="book-specifications mt-4 p-4">
@@ -184,6 +193,12 @@ const BookDetails = ({ books, updateCart }) => {
       )}
       <style>
         {`
+          .book-details-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
           .book-title {
             font-size: 2rem;
             font-weight: bold;
@@ -247,14 +262,23 @@ const BookDetails = ({ books, updateCart }) => {
 
           .icons {
             display: flex;
-            justify-content: start;
             gap: 15px;
-            margin-top: 15px;
           }
 
           .icon {
             font-size: 1.5rem;
             color: #007bff;
+          }
+
+          @media (max-width: 768px) {
+            .d-flex.flex-column.flex-md-row {
+              flex-direction: column !important;
+              align-items: start !important;
+            }
+            .btn.btn-primary {
+              width: 100%;
+              margin-top: 15px;
+            }
           }
         `}
       </style>

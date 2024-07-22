@@ -13,9 +13,9 @@ const Book = {
     return rows.map(book => ({
       ...book,
       images: [
-        book.image1 ? `https://karateonline.lk/uploads/${book.image1}` : null,
-        book.image2 ? `https://karateonline.lk/uploads/${book.image2}` : null,
-        book.image3 ? `https://karateonline.lk/uploads/${book.image3}` : null
+        book.image1 ? `https://happystationerynbooks.lk/uploads/${book.image1}` : null,
+        book.image2 ? `https://happystationerynbooks.lk/uploads/${book.image2}` : null,
+        book.image3 ? `https://happystationerynbooks.lk/uploads/${book.image3}` : null
       ].filter(image => image !== null)
     }));
   },
@@ -24,9 +24,9 @@ const Book = {
     return rows.map(book => ({
       ...book,
       images: [
-        book.image1 ? `https://karateonline.lk/uploads/${book.image1}` : null,
-        book.image2 ? `https://karateonline.lk/uploads/${book.image2}` : null,
-        book.image3 ? `https://karateonline.lk/uploads/${book.image3}` : null
+        book.image1 ? `https://happystationerynbooks.lk/uploads/${book.image1}` : null,
+        book.image2 ? `https://happystationerynbooks.lk/uploads/${book.image2}` : null,
+        book.image3 ? `https://happystationerynbooks.lk/uploads/${book.image3}` : null
       ].filter(image => image !== null)
     }));
   },
@@ -35,9 +35,9 @@ const Book = {
     const book = rows[0];
     if (book) {
       book.images = [
-        book.image1 ? `https://karateonline.lk/uploads/${book.image1}` : null,
-        book.image2 ? `https://karateonline.lk/uploads/${book.image2}` : null,
-        book.image3 ? `https://karateonline.lk/uploads/${book.image3}` : null
+        book.image1 ? `https://happystationerynbooks.lk/uploads/${book.image1}` : null,
+        book.image2 ? `https://happystationerynbooks.lk/uploads/${book.image2}` : null,
+        book.image3 ? `https://happystationerynbooks.lk/uploads/${book.image3}` : null
       ].filter(image => image !== null);
     }
     return book;

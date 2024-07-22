@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const QuantityPopup = ({ item, onClose, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
@@ -32,8 +33,8 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
           <button className="quantity-button" onClick={incrementQuantity} disabled={quantity >= item.stock}>+</button>
         </div>
         <div className="popup-buttons">
-          <button className="btn btn-primary" onClick={handleAddToCart} disabled={item.stock < 1}>Add to Cart</button>
-          <button className="btn btn-secondary" onClick={onClose}>Close</button>
+          <button className="btn btn-primary btn-block" onClick={handleAddToCart} disabled={item.stock < 1}>Add to Cart</button>
+          <button className="btn btn-secondary btn-block" onClick={onClose}>Close</button>
         </div>
       </div>
       <style>
@@ -105,7 +106,8 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
 
           .popup-buttons {
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            gap: 10px;
             margin-top: 20px;
           }
 
@@ -130,6 +132,38 @@ const QuantityPopup = ({ item, onClose, onAddToCart }) => {
           .popup-buttons .btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+          }
+
+          @media (max-width: 768px) {
+            .popup-content {
+              width: 90%;
+              padding: 15px;
+            }
+
+            .popup-content h2 {
+              font-size: 1.25rem;
+            }
+
+            .popup-content p {
+              font-size: 1rem;
+            }
+
+            .quantity-button {
+              width: 25px;
+              height: 25px;
+              font-size: 1.25rem;
+              margin: 0 5px;
+            }
+
+            .quantity-display {
+              font-size: 1rem;
+              width: 25px;
+            }
+
+            .popup-buttons .btn {
+              font-size: 0.9rem;
+              padding: 8px 16px;
+            }
           }
         `}
       </style>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://karateonline.lk/api'
+  baseURL: 'https://happystationerynbooks.lk/api'
 });
 
 api.interceptors.request.use(config => {

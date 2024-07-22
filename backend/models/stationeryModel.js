@@ -22,7 +22,7 @@ const Stationery = {
       weight:row.weight,
       category_id: row.category_id,     
       category_name: row.category_name,
-      image: row.image ? `https://karateonline.lk/uploads/${row.image}` : null
+      image: row.image ? `https://happystationerynbooks.lk/uploads/${row.image}` : null
     }));
   },
   findById: async (id) => {
