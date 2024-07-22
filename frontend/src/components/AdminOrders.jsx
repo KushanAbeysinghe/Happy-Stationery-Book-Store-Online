@@ -100,7 +100,7 @@ const AdminOrders = () => {
     const subtotal = itemTotal + shippingCost;
     doc.text(`Item Total: LKR ${itemTotal.toFixed(2)}`, 10, 160);
     doc.text(`Shipping Cost: LKR ${shippingCost.toFixed(2)}`, 10, 170);
-    doc.text(`Subtotal: LKR ${subtotal.toFixed(2)}`, 10, 180);
+    doc.text(`Subtotal: LKR ${order.total}`, 10, 180);
 
     doc.text('Items:', 10, 190);
     let items = order.items.map(item => [
@@ -180,9 +180,9 @@ const AdminOrders = () => {
           <Row>
             <Col md={4}>
               <h5>Cost Details</h5>
-              <div><strong>Item Total:</strong> LKR {itemTotal.toFixed(2)}</div>
-              <div><strong>Shipping Cost:</strong> LKR {shippingCost.toFixed(2)}</div>
-              <div><strong>Subtotal:</strong> LKR {subtotal.toFixed(2)}</div>
+              <div><strong>Item Total:</strong> LKR {itemTotal}</div>
+              <div><strong>Shipping Cost:</strong> LKR {(order.total - itemTotal).toFixed(2)}</div>
+              <div><strong>Subtotal:</strong> LKR {order.total}</div>
             </Col>
             <Col md={4}>
               <h5>Customer Details</h5>

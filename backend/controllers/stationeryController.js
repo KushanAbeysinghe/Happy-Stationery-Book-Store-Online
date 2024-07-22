@@ -16,9 +16,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const createStationery = async (req, res) => {
-  const { title, price, stock, categoryId } = req.body;
+  const { title, price, stock, weight, categoryId } = req.body;
   const image = req.file ? req.file.filename : null;
-  const stationeryId = await Stationery.create(title, price, stock, categoryId, image);
+  const stationeryId = await Stationery.create(title, price, stock, weight, categoryId, image);
   res.status(201).json({ stationeryId });
 };
 

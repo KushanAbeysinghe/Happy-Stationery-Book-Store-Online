@@ -25,12 +25,14 @@ const AdminDashboard = () => {
     publisher: '',
     publishingDate: '',
     productEdition: '',
+    weight: '',
     description: ''
   });
   const [newStationery, setNewStationery] = useState({
     title: '',
     price: '',
     stock: '',
+    weight: '',
     categoryId: '',
     image: null
   });
@@ -148,6 +150,7 @@ const AdminDashboard = () => {
     formData.append('publisher', newBook.publisher);
     formData.append('publishingDate', newBook.publishingDate);
     formData.append('productEdition', newBook.productEdition);
+    formData.append('bookweight', newBook.weight);
     formData.append('description', newBook.description || 'No Description Available for this product');
 
     try {
@@ -167,6 +170,7 @@ const AdminDashboard = () => {
         publisher: '',
         publishingDate: '',
         productEdition: '',
+        weight: '',
         description: ''
       });
       const booksResponse = await api.get('/books');
@@ -200,6 +204,7 @@ const AdminDashboard = () => {
     formData.append('title', newStationery.title);
     formData.append('price', newStationery.price);
     formData.append('stock', newStationery.stock);
+    formData.append('weight', newStationery.weight);
     formData.append('categoryId', newStationery.categoryId);
     formData.append('image', newStationery.image);
 
@@ -210,6 +215,7 @@ const AdminDashboard = () => {
         title: '',
         price: '',
         stock: '',
+        weight: '',
         categoryId: '',
         image: null
       });
@@ -521,6 +527,17 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div className="form-group">
+                        <input
+                          type="number"
+                          name="weight"
+                          className="form-control"
+                          placeholder="Weight"
+                          value={newBook.weight}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
                         <textarea
                           name="description"
                           className="form-control"
@@ -574,6 +591,19 @@ const AdminDashboard = () => {
                           required
                         />
                       </div>
+                      <div className="form-group">
+                        <input
+                          type="number"
+                          name="weight"
+                          className="form-control"
+                          placeholder="Weight"
+                          value={newStationery.weight}
+                          onChange={handleStationeryInputChange}
+                          required
+                        />
+                      </div>
+
+                    
                       <div className="form-group">
                         <select
                           name="categoryId"

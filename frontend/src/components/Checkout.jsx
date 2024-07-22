@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Checkout = ({ cart, updateCart }) => {
   const [total, setTotal] = useState(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+  const [totalWeight, setTotalWeight] = useState(cart.reduce((sum, item) => sum + item.weight * item.quantity, 0)); // Calculate total weight
+  const [deliveryFee, setDeliveryFee] = useState(0); // Delivery fee based on weight
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
@@ -20,7 +22,6 @@ const Checkout = ({ cart, updateCart }) => {
   const [areas, setAreas] = useState([]);
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [filteredAreas, setFilteredAreas] = useState([]);
-  const [deliveryFee, setDeliveryFee] = useState(0);
   const [orderId, setOrderId] = useState(null);
   const [bankDetails, setBankDetails] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -81,13 +82,32 @@ const Checkout = ({ cart, updateCart }) => {
   }, [district, areas]);
 
   useEffect(() => {
-    if (area) {
-      const selectedArea = areas.find(a => a.id === parseInt(area));
-      setDeliveryFee(parseFloat(selectedArea ? selectedArea.delivery_fee : 0));
-    } else {
-      setDeliveryFee(0);
-    }
-  }, [area, areas]);
+    const calculateDeliveryFee = () => {
+      let fee = 0;
+      if (paymentMethod === 'COD') {
+        const roundedWeight = Math.ceil(totalWeight);
+        fee = roundedWeight <= 1 ? 400 : 400 + (roundedWeight - 1) * 100;
+      } else if (paymentMethod === 'Bank Deposit') {
+        if (totalWeight <= 0.25) fee = 150;
+        else if (totalWeight <= 0.5) fee = 200;
+        else if (totalWeight <= 1) fee = 250;
+        else if (totalWeight <= 2) fee = 300;
+        else if (totalWeight <= 3) fee = 350;
+        else if (totalWeight <= 4) fee = 400;
+        else if (totalWeight <= 5) fee = 450;
+        else if (totalWeight <= 6) fee = 500;
+        else if (totalWeight <= 7) fee = 550;
+        else if (totalWeight <= 8) fee = 600;
+        else if (totalWeight <= 9) fee = 650;
+        else if (totalWeight <= 10) fee = 700;
+        else if (totalWeight <= 15) fee = 800;
+        else if (totalWeight <= 20) fee = 900;
+      }
+      setDeliveryFee(fee);
+    };
+
+    calculateDeliveryFee();
+  }, [totalWeight, paymentMethod]);
 
   const sendEmail = async (templateId, variables) => {
     try {
@@ -268,9 +288,14 @@ const Checkout = ({ cart, updateCart }) => {
                     <h6 className="my-0">{item.title}</h6>
                     <small className="text-muted">{item.type === 'book' ? 'Book' : 'Stationery'}</small>
                   </div>
+                  <span className="text-muted">{item.weight} Kg x {item.quantity}</span>
                   <span className="text-muted">LKR {item.price} x {item.quantity}</span>
                 </li>
               ))}
+              <li className="list-group-item d-flex justify-content-between">
+                <span>Total Weight (Kg)</span>
+                <strong>{totalWeight.toFixed(2)}</strong>
+              </li>
               <li className="list-group-item d-flex justify-content-between">
                 <span>Total (LKR)</span>
                 <strong>{total.toFixed(2)}</strong>
@@ -284,6 +309,7 @@ const Checkout = ({ cart, updateCart }) => {
                 <strong>{(total + deliveryFee).toFixed(2)}</strong>
               </li>
             </ul>
+            <p><b>**Orders Will Be Delivered in 3 - 5 Working Days**</b></p>
             <h4>Payment Method</h4>
             <div className="form-check">
               <input
@@ -307,10 +333,11 @@ const Checkout = ({ cart, updateCart }) => {
                 checked={paymentMethod === 'Bank Deposit'}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <label className="form-check-label" htmlFor="bankDeposit">Bank Deposit</label>
+              <label className="form-check-label" htmlFor="bankDeposit">Bank Deposit </label>
             </div>
             <button type="button" className="btn btn-primary mt-3" onClick={handlePlaceOrder}>Place Order</button>
           </div>
+          
         </div>
       </div>
       <br></br><br></br>

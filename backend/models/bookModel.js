@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 const Book = {
-  create: async (title, author, price, stock, categoryId, images, preorder = false, preorderDate = null, preorderedStock = 0, isbn13, language, binding, publisher, publishingDate, productEdition, description) => {
+  create: async (title, author, price, stock, categoryId, images, preorder = false, preorderDate = null, preorderedStock = 0, isbn13, language, binding, publisher, publishingDate, productEdition, weight, description) => {
     const [result] = await db.execute(
-      'INSERT INTO books (title, author, price, stock, category_id, image1, image2, image3, preorder, preorder_date, preordered_stock, isbn13, language, binding, publisher, publishing_date, product_edition, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, author, price, stock, categoryId, images[0] || null, images[1] || null, images[2] || null, preorder, preorderDate, preorderedStock, isbn13, language, binding, publisher, publishingDate, productEdition, description || 'No Description Available for this product']
+      'INSERT INTO books (title, author, price, stock, category_id, image1, image2, image3, preorder, preorder_date, preordered_stock, isbn13, language, binding, publisher, publishing_date, product_edition, weight, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [title, author, price, stock, categoryId, images[0] || null, images[1] || null, images[2] || null, preorder, preorderDate, preorderedStock, isbn13, language, binding, publisher, publishingDate, productEdition, weight, description || 'No Description Available for this product']
     );
     return result.insertId;
   },

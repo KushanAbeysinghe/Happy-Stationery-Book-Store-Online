@@ -168,6 +168,7 @@ const BookDetails = ({ books, updateCart }) => {
               <div className="col-md-6">
                 <p><strong>Publishing Date:</strong> {formatDate(book.publishing_date)}</p>
                 <p><strong>Product Edition:</strong> {book.product_edition}</p>
+                <p><strong>Product Weight:</strong> {book.weight} Kg</p>
               </div>
             </div>
           </div>

@@ -31,6 +31,7 @@ const createBook = async (req, res) => {
     publisher,
     publishingDate,
     productEdition,
+    weight,
     description
   } = req.body;
   const images = req.files.map(file => file.filename);
@@ -49,6 +50,7 @@ const createBook = async (req, res) => {
     publisher,
     publishingDate,
     productEdition,
+    weight,
     description || 'No Description Available for this product');
   res.status(201).json({ bookId });
 };

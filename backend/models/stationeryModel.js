@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 const Stationery = {
-  create: async (title, price, stock, categoryId, image) => {
+  create: async (title, price, stock, weight, categoryId, image) => {
     const [result] = await db.execute(
-      'INSERT INTO stationery (title, price, stock, category_id, image) VALUES (?, ?, ?, ?, ?)',
-      [title, price, stock, categoryId, image]
+      'INSERT INTO stationery (title, price, stock, weight, category_id, image) VALUES (?, ?, ?, ?, ?, ?)',
+      [title, price, stock, weight, categoryId, image]
     );
     return result.insertId;
   },
@@ -19,7 +19,8 @@ const Stationery = {
       title: row.title,
       price: row.price,
       stock: row.stock,
-      category_id: row.category_id,
+      weight:row.weight,
+      category_id: row.category_id,     
       category_name: row.category_name,
       image: row.image ? `https://karateonline.lk/uploads/${row.image}` : null
     }));
