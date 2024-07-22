@@ -9,7 +9,10 @@ const Footer = () => {
         <div className="row">
           <div className="col-md-3 logo">
             <img src={logo} alt="Happy Store" />
-            <p>Welcome to Happy Store, your one-stop shop for all your book and stationery needs. From the latest bestsellers to essential office supplies, we have everything to keep you inspired and organized. Explore our wide range of products and discover the joy of shopping with Happy Store.</p>
+            <p></p>
+            <p className="justified-text">
+              Welcome to Happy Store, your one-stop shop for all your book and stationery needs. From the latest bestsellers to essential office supplies, we have everything to keep you inspired and organized. Explore our wide range of products and discover the joy of shopping with Happy Store.
+            </p>
             <div className="social-icons">
               <a href="https://www.facebook.com/profile.php?id=61558947222960&mibextid=LQQJ4d"><FaFacebookF /></a>
               <a href="https://www.instagram.com/happy_stationery01?igsh=MW8xcW5nY2NhenhiYg=="><FaInstagram /></a>
@@ -36,9 +39,9 @@ const Footer = () => {
             <h5>Contact</h5>
             <ul className="list-unstyled">
               <li><a href="tel:+94743632710"><FaPhone />+94743632710</a></li>
-              {/* <li><a href="tel:+94777371672"><FaPhone /> +94777371672</a></li> */}
+              <li><a href="tel:+94777371672"><FaWhatsapp />+94762512710</a></li>
               <li><a href=""><FaMapMarkerAlt /> No. 09, Lilian Avenue, Mount Lavinia</a></li>
-              <li><a href=" contact@happystationerynbooks.lk"><FaEnvelope /> contact@happystationerynbooks.lk</a></li>
+              <li><a href="mailto:contact@happystationerynbooks.lk"><FaEnvelope /> contact@happystationerynbooks.lk</a></li>
             </ul>
           </div>
         </div>
@@ -76,12 +79,14 @@ const Footer = () => {
             color: #fff;
           }
           .footer .footer-bottom {
-           
             color: black;
             border-top: 1px solid #333;
             padding-top: 10px;
             margin-top: 20px;
             text-align: center;
+          }
+          .justified-text {
+            text-align: justify;
           }
         `}
       </style>
