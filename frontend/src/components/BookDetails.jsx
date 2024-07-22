@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import QuantityPopup from './QuantityPopup';
 import { GlassMagnifier } from 'react-image-magnifiers';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaShoppingCart, FaTruck, FaLock, FaHeadset } from 'react-icons/fa';
 
 const BookDetails = ({ books, updateCart }) => {
   const { id } = useParams();
@@ -32,7 +33,6 @@ const BookDetails = ({ books, updateCart }) => {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding-top: 20%;
           }
           .loading-spinner {
             border: 8px solid #f3f3f3;
@@ -61,7 +61,6 @@ const BookDetails = ({ books, updateCart }) => {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding-top: 20%;
           }
           .loading-spinner {
             border: 8px solid #f3f3f3;
@@ -104,22 +103,21 @@ const BookDetails = ({ books, updateCart }) => {
   return (
     <div className="container book-details mt-5">
       <div className="row">
-        <div className="col-md-12 text-center mb-4">
-          {/* <h2 className="book-title">{book.title}</h2> */}
-        </div>
-        <div className="col-md-6">
-          <GlassMagnifier
-            imageSrc={book.images[selectedImage]}
-            imageAlt={book.title}
-            magnifierSize="50%"
-            magnifierBorderSize={2}
-            magnifierBorderColor="rgba(255, 255, 255, 0.5)"
-            magnifierOffsetX={0}
-            magnifierOffsetY={0}
-            magnifierZoom={2}
-            style={{ width: '100%', borderRadius: '8px' }}
-          />
-          <div className="image-thumbnails mt-3 d-flex justify-content-center">
+        <div className="col-md-5 d-flex flex-column align-items-center">
+          <div className="image-container mb-3">
+            <GlassMagnifier
+              imageSrc={book.images[selectedImage]}
+              imageAlt={book.title}
+              magnifierSize="50%"
+              magnifierBorderSize={2}
+              magnifierBorderColor="rgba(255, 255, 255, 0.5)"
+              magnifierOffsetX={0}
+              magnifierOffsetY={0}
+              magnifierZoom={2}
+              style={{ width: '100%', height: 'auto', borderRadius: '15px' }}
+            />
+          </div>
+          <div className="image-thumbnails d-flex justify-content-center">
             {book.images.map((image, index) => (
               <img
                 key={index}
@@ -132,10 +130,9 @@ const BookDetails = ({ books, updateCart }) => {
             ))}
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="book-info">
-          <h2 className="book-title">{book.title}</h2>
-            <p><strong>Author:</strong> {book.author}</p><br></br>
+        <div className="col-md-7">
+          <div className="book-info p-4">
+            <h2 className="book-title">{book.title}</h2>
             <h4><strong>Price:</strong> LKR {book.price}</h4>
             <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
             {book.stock === 0 && book.preorder && (
@@ -149,23 +146,25 @@ const BookDetails = ({ books, updateCart }) => {
             >
               Add to Cart
             </button>
+            <div className="icons mt-3">
+              <FaShoppingCart className="icon" title="Shopping Cart" />
+              <FaTruck className="icon" title="Fast Delivery" />
+              <FaLock className="icon" title="Secure" />
+              <FaHeadset className="icon" title="24/7 Customer Support" />
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="row mt-5">
-        <div className="col-md-12">
-          <div className="book-specifications">
-            <h4 className="specifications-header">Product Specifications</h4>
+          <div className="book-specifications mt-4 p-4">
+            <h5 className="specifications-header">Product Specifications</h5>
             <p><strong>Book Description:</strong> {book.description || 'No description available for this product.'}</p>
-            <h5 className="specifications-header">Book Specifications</h5>
             <div className="row">
               <div className="col-md-6">
                 <p><strong>ISBN-13:</strong> {book.isbn13}</p>
                 <p><strong>Language:</strong> {book.language}</p>
                 <p><strong>Binding:</strong> {book.binding}</p>
-                <p><strong>Publisher:</strong> {book.publisher}</p>
+                <p><strong>Author:</strong> {book.author}</p>
               </div>
               <div className="col-md-6">
+                <p><strong>Publisher:</strong> {book.publisher}</p>
                 <p><strong>Publishing Date:</strong> {formatDate(book.publishing_date)}</p>
                 <p><strong>Product Edition:</strong> {book.product_edition}</p>
                 <p><strong>Product Weight:</strong> {book.weight} Kg</p>
@@ -174,7 +173,7 @@ const BookDetails = ({ books, updateCart }) => {
           </div>
         </div>
       </div>
-      <br></br><br></br>
+      <br></br><br></br><br></br><br></br>
 
       {isPopupOpen && (
         <QuantityPopup
@@ -200,14 +199,21 @@ const BookDetails = ({ books, updateCart }) => {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           }
           .specifications-header {
-            margin-top: 20px;
             font-size: 1.5rem;
             font-weight: bold;
             color: #343a40;
           }
+          .image-container {
+            width: 80%;
+            max-width: 300px;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
           .image-thumbnails img {
             margin: 5px;
-            width: 70px;
+            width: 50px;
             height: auto;
             cursor: pointer;
             border: 1px solid transparent;
@@ -215,7 +221,7 @@ const BookDetails = ({ books, updateCart }) => {
           }
 
           .image-thumbnails img.selected {
-            border: 2px solid #007bff;
+            border: 1px solid #007bff;
           }
 
           .loading-container {
@@ -238,6 +244,18 @@ const BookDetails = ({ books, updateCart }) => {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
           }
+
+          .icons {
+            display: flex;
+            justify-content: start;
+            gap: 15px;
+            margin-top: 15px;
+          }
+
+          .icon {
+            font-size: 1.5rem;
+            color: #007bff;
+          }
         `}
       </style>
     </div>
@@ -247,7 +265,7 @@ const BookDetails = ({ books, updateCart }) => {
 const styles = {
   thumbnail: {
     margin: '5px',
-    width: '70px',
+    width: '50px',
     height: 'auto',
     cursor: 'pointer',
     border: '1px solid transparent',

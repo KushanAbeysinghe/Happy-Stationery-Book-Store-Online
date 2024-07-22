@@ -286,9 +286,9 @@ const Checkout = ({ cart, updateCart }) => {
                 <li className="list-group-item d-flex justify-content-between lh-condensed" key={item.id}>
                   <div>
                     <h6 className="my-0">{item.title}</h6>
-                    <small className="text-muted">{item.type === 'book' ? 'Book' : 'Stationery'}</small>
+                    <small className="text-muted">{item.type === 'book' ? 'Book' : 'Stationery'}</small>      <small className="text-muted">{item.weight} Kg x {item.quantity}</small>
                   </div>
-                  <span className="text-muted">{item.weight} Kg x {item.quantity}</span>
+                  {/* <small className="text-muted">{item.weight} Kg x {item.quantity}</small> */}
                   <span className="text-muted">LKR {item.price} x {item.quantity}</span>
                 </li>
               ))}

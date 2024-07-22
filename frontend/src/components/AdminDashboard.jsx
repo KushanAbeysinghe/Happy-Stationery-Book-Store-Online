@@ -150,7 +150,7 @@ const AdminDashboard = () => {
     formData.append('publisher', newBook.publisher);
     formData.append('publishingDate', newBook.publishingDate);
     formData.append('productEdition', newBook.productEdition);
-    formData.append('bookweight', newBook.weight);
+    formData.append('weight', newBook.weight);
     formData.append('description', newBook.description || 'No Description Available for this product');
 
     try {
