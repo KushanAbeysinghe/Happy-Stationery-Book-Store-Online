@@ -11,8 +11,8 @@ const Admin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const hardcodedEmail = 'admin';
-    const hardcodedPassword = 'admin';
+    const hardcodedEmail = 'Erandi Gunawardena';
+    const hardcodedPassword = 'Chathunika@1';
 
     if (email === hardcodedEmail && password === hardcodedPassword) {
       login();
