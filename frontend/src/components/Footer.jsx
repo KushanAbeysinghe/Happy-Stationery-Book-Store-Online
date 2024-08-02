@@ -38,8 +38,8 @@ const Footer = () => {
           <div className="col-md-3">
             <h5>Contact</h5>
             <ul className="list-unstyled">
-              <li><a href="tel:+94743632710"><FaPhone />+94743632710</a></li>
               <li><a href="tel:+94777371672"><FaWhatsapp />+94762512710</a></li>
+              <li><a href="tel:+94743632710"><FaPhone />+94743632710</a></li>
               <li><a href=""><FaMapMarkerAlt /> No. 09, Lilian Avenue, Mount Lavinia</a></li>
               <li><a href="mailto:contact@happystationerynbooks.lk"><FaEnvelope /> contact@happystationerynbooks.lk</a></li>
             </ul>

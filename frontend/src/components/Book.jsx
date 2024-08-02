@@ -48,7 +48,8 @@ const Book = ({ book }) => {
           ) : (
             book.preorder ? (
               <span className="text-warning" style={{ color: '#ffc107 !important' }}>
-                Out of stock (Available on: {new Date(book.preorder_date).toLocaleDateString()})
+                Out of stock (Available on: {new Date(book.preorder_date).toLocaleDateString()}) <b><p> Pre-Order </p> </b>
+
               </span>
             ) : (
               <span className="text-danger" style={{ color: '#dc3545 !important' }}>Out of Stock</span>

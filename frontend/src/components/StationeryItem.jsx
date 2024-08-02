@@ -10,10 +10,18 @@ const StationeryItem = ({ item, onAddToCart }) => {
       <div className="card-body">
         <h5 className="card-title">{item.title}</h5>
         <p className="card-text">Price: LKR {item.price}</p>
-        <p className="card-text">Stock: {item.stock > 0 ? item.stock : 'Out of stock'}</p>
+        {/* <p className="card-text">Stock: {item.stock > 0 ? item.stock : 'Out of stock'}</p>
         {item.stock > 0 && (
           <button className="btn btn-success" onClick={() => onAddToCart(item)}>Add to Cart</button>
-        )}
+        )} */}
+
+<p className="card-text">Stock: {item.stock > 0 ? 'In stock' : 'Out of stock'}</p>
+{item.stock > 0 ? (
+  <button className="btn btn-success" onClick={() => onAddToCart(item)}>Add to Cart</button>
+) : (
+  <button className="btn btn-success" disabled>Add to Cart</button>
+)}
+
       </div>
       <style jsx>{`
         .book-card {

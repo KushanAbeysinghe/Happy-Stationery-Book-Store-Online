@@ -12,6 +12,7 @@ const BookDetails = ({ books, updateCart }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [book, setBook] = useState(null);
+  const [showBankDetails, setShowBankDetails] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -101,6 +102,14 @@ const BookDetails = ({ books, updateCart }) => {
     return date.toLocaleDateString('en-CA'); // Formats the date as YYYY-MM-DD
   };
 
+  const handleBankDetailsClick = () => {
+    setShowBankDetails(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowBankDetails(false);
+  };
+
   return (
     <div className="container book-details mt-5">
       <Helmet>
@@ -143,7 +152,11 @@ const BookDetails = ({ books, updateCart }) => {
             <h4><strong>Price:</strong> LKR {book.price}</h4>
             <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
             {book.stock === 0 && book.preorder && (
-              <p><strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}</p>
+              <p>
+                <strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()} 
+                <p><b>Pre-Orders available on Bank Deposit</b></p>
+                <button className="btn btn-primary" onClick={handleBankDetailsClick}>Show Bank Details</button>
+              </p>
             )}
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3">
               <div className="icons mb-3 mb-md-0">
@@ -191,6 +204,21 @@ const BookDetails = ({ books, updateCart }) => {
           onAddToCart={addToCart}
         />
       )}
+
+      {showBankDetails && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Bank Details:</h3>
+            <p>Bank Name: Sampath Bank</p>
+            <p>Bank Branch: Kegalle</p>
+            <p>Account Name: M.R.E.C. GUNAWARDENA</p>
+            <p>Account Number: 106457910600</p>
+            <p>WhatsApp Number: 0762512710</p>
+            <button className="btn btn-secondary" onClick={handleClosePopup}>Close</button>
+          </div>
+        </div>
+      )}
+
       <style>
         {`
           .book-details-container {
@@ -199,86 +227,90 @@ const BookDetails = ({ books, updateCart }) => {
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           }
-          .book-title {
-            font-size: 2rem;
-            font-weight: bold;
+          .image-container {
+            width: 350px;
+            height: auto;
+            display: flex;
+            justify-content: center;
           }
-          .book-info p {
-            font-size: 1.1rem;
-            margin: 5px 0;
+          .image-thumbnails {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
           }
-          .book-specifications {
-            background-color: #f8f9fa;
-            padding: 20px;
+          .thumbnail {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border: 2px solid transparent;
+            border-radius: 8px;
+          }
+          .thumbnail.selected {
+            border: 2px solid #FFDE59;
+          }
+          .thumbnail:hover {
+            transform: scale(1.1);
+          }
+          .book-info {
+            background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 10px;
+          }
+          .book-title {
+            font-size: 24px;
+            color: #333;
+          }
+          .book-specifications {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 10px;
           }
           .specifications-header {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #343a40;
+            font-size: 20px;
+            color: #333;
           }
-          .image-container {
-            width: 80%;
-            max-width: 300px;
-            border: 2px solid #ccc;
-            border-radius: 15px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          .icons {
+            display: flex;
+            gap: 10px;
           }
-          .image-thumbnails img {
-            margin: 5px;
-            width: 50px;
-            height: auto;
+          .icon {
+            font-size: 24px;
+            color: #007bff;
             cursor: pointer;
-            border: 1px solid transparent;
-            border-radius: 5px;
+            transition: transform 0.2s ease;
           }
-
-          .image-thumbnails img.selected {
-            border: 1px solid #007bff;
+          .icon:hover {
+            transform: scale(1.1);
           }
-
-          .loading-container {
+          .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
           }
-
-          .loading-spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #FFDE59;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.5s linear infinite;
+          .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
           }
-
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+          .popup-content h3 {
+            margin-bottom: 15px;
           }
-
-          .icons {
-            display: flex;
-            gap: 15px;
-          }
-
-          .icon {
-            font-size: 1.5rem;
-            color: #007bff;
-          }
-
-          @media (max-width: 768px) {
-            .d-flex.flex-column.flex-md-row {
-              flex-direction: column !important;
-              align-items: start !important;
-            }
-            .btn.btn-primary {
-              width: 100%;
-              margin-top: 15px;
-            }
+          .popup-content p {
+            margin-bottom: 10px;
           }
         `}
       </style>
@@ -288,13 +320,14 @@ const BookDetails = ({ books, updateCart }) => {
 
 const styles = {
   thumbnail: {
+    width: '60px',
+    height: '60px',
     margin: '5px',
-    width: '50px',
-    height: 'auto',
     cursor: 'pointer',
-    border: '1px solid transparent',
-    borderRadius: '5px',
-  },
+    transition: 'transform 0.2s ease',
+    border: '2px solid transparent',
+    borderRadius: '8px',
+  }
 };
 
 export default BookDetails;

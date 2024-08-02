@@ -32,7 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api', stationeryRoutes);
+app.use('/api', stationeryRoutes);submit
 app.use('/api/locations', locationRoutes);
 app.use('/api', bankRoutes);
 

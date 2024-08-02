@@ -310,6 +310,7 @@ const Checkout = ({ cart, updateCart }) => {
               </li>
             </ul>
             <p><b>**Orders Will Be Delivered in 3 - 5 Working Days**</b></p>
+            <p><b>**Pre-Orders Will Be Delivered in 3 - 4 Weeks**</b></p>
             <h4>Payment Method</h4>
             <div className="form-check">
               <input
