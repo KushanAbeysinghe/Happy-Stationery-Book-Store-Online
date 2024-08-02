@@ -151,7 +151,7 @@ const BookDetails = ({ books, updateCart }) => {
             <h2 className="book-title">{book.title}</h2>
             <h4><strong>Price:</strong> LKR {book.price}</h4>
             <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-            {book.stock === 0 && book.preorder && (
+            {book.preorder === 1 && (
               <p>
                 <strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()} 
                 <p><b>Pre-Orders available on Bank Deposit</b></p>

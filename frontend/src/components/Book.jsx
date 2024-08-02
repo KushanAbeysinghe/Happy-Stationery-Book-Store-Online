@@ -33,7 +33,7 @@ const Book = ({ book }) => {
               marginTop: '10px' // Adds gap on the top of the image
             }} 
           />
-          {book.stock === 0 && book.preorder && (
+          { book.preorder === 1 &&  (
             <span style={{
               position: 'absolute',
               top: '10px',
