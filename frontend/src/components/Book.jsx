@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,17 +21,33 @@ const Book = ({ book }) => {
       }}
     >
       {book.images && book.images.length > 0 && (
-        <img 
-          src={book.images[0]} 
-          alt={book.title} 
-          style={{ 
-            width: '100%', 
-            height: 'auto', 
-            objectFit: 'contain', 
-            maxHeight: '200px', // Increase the height to make the image larger
-            marginTop: '10px' // Adds gap on the top of the image
-          }} 
-        />
+        <div style={{ position: 'relative' }}>
+          <img 
+            src={book.images[0]} 
+            alt={book.title} 
+            style={{ 
+              width: '100%', 
+              height: 'auto', 
+              objectFit: 'contain', 
+              maxHeight: '200px', // Increase the height to make the image larger
+              marginTop: '10px' // Adds gap on the top of the image
+            }} 
+          />
+          {book.stock === 0 && book.preorder && (
+            <span style={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              backgroundColor: 'red',
+              color: 'white',
+              padding: '5px 10px',
+              borderRadius: '5px',
+              fontWeight: 'bold'
+            }}>
+              Pre-Order
+            </span>
+          )}
+        </div>
       )}
       <div className="card-body text-center">
         <h5 className="card-title" style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{book.title}</h5>
@@ -48,8 +63,7 @@ const Book = ({ book }) => {
           ) : (
             book.preorder ? (
               <span className="text-warning" style={{ color: '#ffc107 !important' }}>
-                Out of stock (Available on: {new Date(book.preorder_date).toLocaleDateString()}) <b><p> Pre-Order </p> </b>
-
+                Out of stock (Available on: {new Date(book.preorder_date).toLocaleDateString()})
               </span>
             ) : (
               <span className="text-danger" style={{ color: '#dc3545 !important' }}>Out of Stock</span>
