@@ -213,7 +213,7 @@ const BookDetails = ({ books, updateCart }) => {
             <p>Bank Branch: Kegalle</p>
             <p>Account Name: M.R.E.C. GUNAWARDENA</p>
             <p>Account Number: 106457910600</p>
-            <p>WhatsApp Number: 0762512710</p>
+            <p>WhatsApp Number: 0743632710</p>
             <button className="btn btn-secondary" onClick={handleClosePopup}>Close</button>
           </div>
         </div>
