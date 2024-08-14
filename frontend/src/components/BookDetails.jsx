@@ -150,10 +150,10 @@ const BookDetails = ({ books, updateCart }) => {
           <div className="book-info p-4">
             <h2 className="book-title">{book.title}</h2>
             <h4><strong>Price:</strong> LKR {book.price}</h4>
-            <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
+            {/* <p><strong>Stock:</strong> {book.stock > 0 ? 'In Stock' : 'Out of Stock'}</p> */}
             {book.preorder === 1 && (
               <p>
-                <strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()} 
+                {/* <strong>Available from:</strong> {new Date(book.preorder_date).toLocaleDateString()}  */}
                 <p><b>Pre-Orders available on Bank Deposit</b></p>
                 <button className="btn btn-primary" onClick={handleBankDetailsClick}>Show Bank Details</button>
               </p>
